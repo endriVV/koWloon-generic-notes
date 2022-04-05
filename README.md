@@ -1,7 +1,7 @@
 # koWloon (generic) notes
 
 Kgn is an app with notes inside notes all the way down to more notes. <br />
-A Note can be attached to a Node which in turn can have many subnodes inside it and on so on. It's really all there is to it.
+A Note can be attached to a Node which in turn can have subnodes inside it and on so on. It's really all there is to it.
 
 # Notice:
 
@@ -10,7 +10,7 @@ Kgn is still in development, it might lose notes due to bugs, it is advised to b
 
 # Install and Update:
 
-Kgn is single file Windows program. Head over to the release page, download the zip, extract and run.
+Kgn is a single file Windows executable. Head over to the release page, download the zip, extract and run.
 
 # Demo:
 
