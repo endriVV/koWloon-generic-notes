@@ -1,6 +1,6 @@
 # koWloon (generic) notes
 
-Kgn is an app with notes inside notes all the way down to more notes.
+Kgn is an app with notes inside notes all the way down to more notes. <br />
 A Note can be attached to a Node which in turn can have many subnodes inside it and on so on. It's really all there is to it.
 
 # Notice:
@@ -17,5 +17,5 @@ Kgn is single file Windows program. Head over to the release page, download the 
 
 # Thanks to:
 
-💕 Nim, Nim Libraries, Nim Community
+💕 Nim, Nim Libraries, Nim Community <br />
 💕 Talented [xoMikasa](https://emoji.gg/user/647561486712963101) for the pets of the logo
