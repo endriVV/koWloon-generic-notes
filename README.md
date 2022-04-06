@@ -12,10 +12,14 @@ Kgn is still in development, it might lose notes due to bugs, it is advised to b
 
 Kgn is a single file Windows executable. Head over to the release page, download the zip, extract and run.
 
+## Build from source
+
+Install Nim and the needed libraries: Wnim, Jsony, Supersnappy, Nipref, and compile kowloon.nim
+
 # Demo:
 
 
-# Thanks to:
+# Credits:
 
 💕 Nim, Nim Libraries, Nim Community <br />
-💕 Talented [xoMikasa](https://emoji.gg/user/647561486712963101) for the pets of the logo
+ Pets for the logo were taken from talented [xoMikasa](https://emoji.gg/user/647561486712963101)
