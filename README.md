@@ -1,3 +1,5 @@
+![This is an image](/gyoza/Untitled3.png)
+
 # koWloon (generic) notes
 
 Kgn is an app with notes inside notes all the way down to more notes. <br />
