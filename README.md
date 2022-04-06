@@ -10,7 +10,7 @@ Kgn is still in development, it might lose notes due to bugs, it is advised to b
 
 # Install and Update:
 
-Kgn is a single file Windows executable. Head over to the release page, download the zip, extract and run.
+Kgn is a single Windows file exe. Head over to the release page, download the zip, extract and run.
 
 ## Build from source
 
