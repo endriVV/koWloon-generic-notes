@@ -1,8 +1,9 @@
-import std / [os, sets, times, tables, algorithm, strutils]
+import std / [os, sets, times, tables, algorithm, strutils, options]
 
 import jsony
 import supersnappy
 import niprefs
+import puppy
 
 import watermelon
 import glasses
@@ -10,6 +11,13 @@ import realestate
 
 var dt : Datetime
 var failedToLoad* : bool
+
+var ver4updoot* = "v0.4.1"
+
+type updoots = object
+  tag_name: string
+
+
 
 # A E S T E T H I C
 
@@ -440,4 +448,19 @@ proc archivedRepo*(currentParentId : string):bool =
     return false
 
 
-     
+
+# A E S T E T H I C
+
+proc isUpdated*():Option[bool]=
+  try:
+    var req = Request(url: parseUrl("https://api.github.com/repos/endriVV/koWloon-generic-notes/releases/latest"),verb: "get")
+    var res = fetch(req)
+    var jsonNode = res.body.fromJson(updoots)
+    var tagz = jsonNode.tag_name
+    echo tagz
+    if tagz > ver4updoot:
+      return some(false)
+    else:
+      return some(true)
+  except:
+    return none(bool)

@@ -1,5 +1,5 @@
 import wNim / [wApp,wFontDialog, wImage, wDirDialog, wColorDialog ,wFileDialog, wFont, wCheckBox, wComboBox, wFrame, wPanel, wButton, wTextCtrl, wUtils, wListCtrl, wStaticBox, wMessageDialog, wStatusBar, wIcon, wBitmap, wMenuBar, wMenu, wMenuBarCtrl,wDataObject,wListBox,wStaticText]
-import std / [strformat, strutils, tables, algorithm, os, times, unicode, sequtils, with]
+import std / [strformat, strutils, tables, algorithm, os, times, unicode, sequtils, with, options]
 import winim/winstr, winim/inc/shellapi
 
 import niprefs
@@ -21,7 +21,7 @@ let namedrop = "koWloon (generic) notes"
 let author = "endriVV"
 let github = "https://github.com/endriVV/koWloon-generic-notes"
 var archiveName : string
-let ver = " - 0.4.0 "
+let ver = fmt" - {ver4updoot} "
 var bookmarkingSeq : seq[string]
 
 
@@ -115,6 +115,7 @@ proc main(bootstarter : bool) =
       idStarkList
       idArchivedRepo
       idAddView
+      idCheckUpdates
 
 
   let menuBar = MenuBar(frame)
@@ -172,10 +173,13 @@ proc main(bootstarter : bool) =
   menuUtils.append(idExportGlobal1to1,"&Export Global 1to1","Deep Export from current node, one file per node")
   let menuHelp = Menu(menuBar, "&Help")
   menuHelp.append(idDocx, "Documentation", "Documentation")  
+  menuHelp.append(idCheckUpdates, "Check for Updates..", "Check for Updates")  
   menuHelp.appendSeparator()
   menuHelp.append(idBackup, "Backup", "Make a backup copy of your archive in .kgn and plain text format")
   menuHelp.appendSeparator()
-  menuHelp.append(idAbout, "About", "Info")    
+  menuHelp.append(idAbout, "About", "Info") 
+
+     
   let menuContext = Menu()
   menuContext.append(idToggleStarks,"&Add / Remove Bookmark","Toggled the favorite status of the current node")
   menuContext.appendSeparator()
@@ -1340,6 +1344,46 @@ proc main(bootstarter : bool) =
     frame2.show()
 
 
+  # A E S T E T H I C
+
+  proc check4updoots() =
+
+    var t1 = fmt"{namedrop}{ver}"
+    var t2 : string
+    var check = isUpdated()
+    if check == some(false):
+        t2 = "New updates are available for Kgn! Visit the homepage to download them."
+    if check == some(true):
+        t2 = "Kgn is updated to the latest version. Happy day."
+    if check == none(bool):
+        t2 = "Couldn't connect to the server"
+    var t3 = github
+    let app2 = App()
+    let frame2 = Frame(title="About", size=(450, 600))
+    let textctrl2 = TextCtrl(frame2, style=wTeRich or wTeMultiLine or wTeCenter)
+    let smallFont = Font(12, weight=900, faceName="Tahoma")
+    frame2.icon = Icon(slurpy)
+    with textctrl2:
+      writeText("\n")
+      setStyle(lineSpacing=1.5, indent=288)
+      writeImage(Image("gyoza/Untitled5.png"), 0.6)
+      writeText("\n")
+      writeText(t1)
+      setFormat(smallFont, fgColor=wGreen)
+      writeText("\n")
+      writeText(t2)
+      setFormat(smallFont, fgColor=wBlack)
+      writeText("\n")
+      writeLink(t3, "Github page")
+      writeText("\n")
+
+    textctrl2.wEvent_TextLink do (event: wEvent):
+      if event.mouseEvent == wEvent_LeftUp:
+        let url = textctrl2.range(event.start..<event.end)
+        ShellExecute(0, "open", url, nil, nil, 5)
+
+    frame2.center()
+    frame2.show()
 
 
   # A E S T E T H I C
@@ -2257,6 +2301,9 @@ proc main(bootstarter : bool) =
 
   frame.idAbout do ():
     abouts()
+
+  frame.idCheckUpdates do ():
+    check4updoots()
 
 
 
