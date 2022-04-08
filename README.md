@@ -21,7 +21,7 @@ Install Nim and the needed libraries: Wnim, Jsony, Supersnappy, Nipref, and comp
 
 # Demo:
 
-https://user-images.githubusercontent.com/103033140/162392965-bf8f8100-8a91-4663-88a3-1eaec7a3254e.mp4
+
 
 
 
