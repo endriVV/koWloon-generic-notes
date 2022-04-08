@@ -3,7 +3,7 @@
 # koWloon (generic) notes
 
 Kgn is an app with notes inside notes all the way down to more notes. <br />
-It's really all there is to it.
+It's really all there is to it 📝
 
 # Notice:
 
