@@ -16,9 +16,13 @@ Kgn is a single Windows file exe. Head over to the release page, download the zi
 
 ## Build from source
 
+
 Install Nim and the needed libraries: Wnim, Jsony, Supersnappy, Nipref, and compile kowloon.nim
 
 # Demo:
+
+https://user-images.githubusercontent.com/103033140/162392965-bf8f8100-8a91-4663-88a3-1eaec7a3254e.mp4
+
 
 
 # Credits:
