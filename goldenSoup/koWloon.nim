@@ -211,8 +211,9 @@ proc main(bootstarter : bool) =
   let boxFour = StaticBox(panel, label="Add Node:")
   let inputList = TextCtrl(boxFour)
   let inputSearch = TextCtrl(boxThree)
-  let plusButton = Button(boxFour, label="+")
-  let minusButton = Button(boxFour, label="-")
+  let addnodeButton = Button(boxFour, label="▶")
+  let plusButton = Button(boxFour, label="↪")
+  let minusButton = Button(boxFour, label="↩")
   let searchCombo = ComboBox(boxThree, value="Nodes",
     choices=["Nodes", "Notes", "Both"],
     style=wCbReadOnly)
@@ -305,14 +306,18 @@ proc main(bootstarter : bool) =
           inputList:
               top = boxFour.top
               left = boxFour.left
+          addnodeButton:
+              top = boxFour.top
+              left = inputList.right + 5
+              width = inputList.width / 4
           plusButton:
               top = boxFour.top
-              left = inputList.right + 10
-              width = inputList.width / 3
+              left = addnodeButton.right + 5
+              width = inputList.width / 4
           minusButton:
               top = boxFour.top
               left = plusButton.right
-              width = inputList.width / 3
+              width = inputList.width / 4
       boxThree.layout:
           inputSearch:
               top = boxThree.top
@@ -2007,6 +2012,22 @@ proc main(bootstarter : bool) =
   minusButton.connect(wEvent_Button) do (event: wEvent):
     if modeStatus == addx:
       getOutsideGUI()
+
+
+  addnodeButton.connect(wEvent_Button) do (event: wEvent):
+    if modFlag == false:
+      if modeStatus == addx:
+        addChildGUI()
+        status.setStatusText("New node added")
+      elif modeStatus == search:
+        replaceGUI()
+    else:
+      modifyNode()  
+
+
+
+
+
 
   keepCheck.wEvent_CheckBox do (event: wEvent):
     if keepCheck.isChecked:
