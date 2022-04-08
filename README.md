@@ -1,4 +1,4 @@
-![This is an image](goldensoup/gyoza/Untitled3.png)
+![This is an image](goldenSoup/gyoza/Untitled3.png)
 
 # koWloon (generic) notes
 
