@@ -1012,7 +1012,6 @@ proc main(bootstarter : bool) =
       if tablex[currentParentId].children.len > 0:
         contextSearchNodes(currentParentId, searchCombo.getSelection())
     else:
-      #searchNodesGUI()
       contextSearchNodes("root", searchCombo.getSelection())
 
 
