@@ -264,14 +264,18 @@ proc exportGlobal1to1beta*(id : string): bool=
 
 
 proc backupMaker*():bool =
-  nowMaker()
-  let dtformatted = dt.format("yyyy-MM-dd HH-mm-ss ")
-  var temp = getString(prefs["exportPath"])
-  prefs["exportPath"] = temp & "\\koWBackup"
-  createDir(temp & "\\koWBackup")
-  save(temp & "\\koWBackup\\" & dtformatted & "backup.kgn")
-  result = exportGlobal("root")
-  prefs["exportPath"] = temp
+  try:
+    nowMaker()
+    let dtformatted = dt.format("yyyy-MM-dd HH-mm-ss ")
+    var temp = getString(prefs["exportPath"])
+    prefs["exportPath"] = temp & "\\koWBackup"
+    createDir(temp & "\\koWBackup")
+    save(temp & "\\koWBackup\\" & dtformatted & "backup.kgn")
+    result = exportGlobal("root")
+    prefs["exportPath"] = temp
+    return true
+  except:
+    return false
 
 
 

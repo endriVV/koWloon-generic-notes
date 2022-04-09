@@ -211,7 +211,7 @@ proc main(bootstarter : bool) =
   let boxFour = StaticBox(panel, label="Add Node:")
   let inputList = TextCtrl(boxFour)
   let inputSearch = TextCtrl(boxThree)
-  let addnodeButton = Button(boxFour, label="▶")
+  let addnodeButton = Button(boxFour, label="+")
   let plusButton = Button(boxFour, label="↪")
   let minusButton = Button(boxFour, label="↩")
   let searchCombo = ComboBox(boxThree, value="Nodes",
@@ -229,6 +229,7 @@ proc main(bootstarter : bool) =
   inputSearch.setFont(defaultFont2)
   inputList.setFont(defaultFont2)
   dataBox.setMargin(5) #hmmmmm 
+
 
 
   var appliqueNotes = wLightSteelBlue
