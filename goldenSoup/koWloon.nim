@@ -1535,20 +1535,7 @@ proc main(bootstarter : bool) =
           except:
             discard
 
-        if dataList.getSelection() == 22:
-          try:
-            let filesnz = FileDialog(frame, message="Create a new archive", defaultDir = getAppDir(), defaultFile = "archiveRepo", style = wFdSave or wFdOverwritePrompt, wildcard = "KGN files (*.kgn)|*.kgn").display()
-            var filex = filesnz[0] & ".kgn"
-            tablex[currentNode].data = "The following file is set for Archived Repo " & filex
-            refreshNode()
-            prefs["archivedRepo"] = filex
-            var archHelloworld = Thingy()
-            archHelloworld.id = "root"
-            archHelloworld.title = "root"
-            archTablex["root"] = archHelloworld
-            saveRepo(getString(prefs["archivedRepo"]))
-          except:
-            discard
+
 
     if modeStatus == docx:
       status.setStatusText("[Documentation Mode] press Esc to Exit")
@@ -2297,9 +2284,7 @@ proc main(bootstarter : bool) =
 
   frame.idArchivedRepo do ():
     if currentNode.len > 0:
-      deepCopy(currentNode)
-      if archivedRepo(currentParentId):
-        removeChildGUI(currentNode)
+      discard
 
 
   frame.idStarkList do ():

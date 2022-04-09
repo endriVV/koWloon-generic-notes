@@ -65,8 +65,7 @@ docxnotes.add("""
 """)
 
 docxnotes.add("""
-- [Archive] will tranfer a Node to a secondary archive and delete it. To use this function you must first init an [Archive Repo] in the [Preferences]. """ & "\r\n" & """
-- The archive repo is just an ordinary .kgn data file that can be opened and browsed.
+- [Archive] will tranfer a Node to a hidden Archive Node, to browse it find the Archive list on the menus.
 """)
 
 
@@ -120,7 +119,7 @@ prefstitles.add("Teal Color Theme")
 prefstitles.add("Savana Color Theme")
 prefstitles.add("Metal Color Theme")
 prefstitles.add("Default Theme")
-prefstitles.add("Archived Repo Path")
+
 
 prefnotes.add("Sets the folder to [Export] in plain text and [Backup]. Use [Setter] button to set")   #this order must not be changed
 prefnotes.add("Sets the Font for the Notes Box. Use [Setter] button to set")
@@ -144,7 +143,7 @@ prefnotes.add("Sets the Color Scheme of the app to Teal")
 prefnotes.add("Sets the Color Scheme of the app to Savana")
 prefnotes.add("Sets the Color Scheme of the app to Metal")
 prefnotes.add("Resets the Color Scheme to Default")
-prefnotes.add("Inits an Archived Repo. It works like an ordinary .kgn Archive and can be browsed in the usual way")
+
 
 
 prefhelper.add("..")
@@ -167,4 +166,5 @@ prefhelper.add("appliqueAddNodeColor")
 prefhelper.add("..")
 prefhelper.add("..")
 prefhelper.add("..")
-
+prefhelper.add("..")
+prefhelper.add("..")

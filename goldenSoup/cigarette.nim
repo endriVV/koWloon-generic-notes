@@ -7,7 +7,7 @@ import puppy
 
 import watermelon
 import glasses
-import realestate
+
 
 var dt : Datetime
 var failedToLoad* : bool
@@ -55,7 +55,6 @@ var prefs* = toPrefs({
   appliqueNodesColor: -1,
   appliqueFindColor: -1,
   appliqueAddNodeColor: -1,
-  archivedRepo: ""
 }).initPrefs(path = "koWloon.niprefs")
 
 
@@ -357,95 +356,6 @@ proc metalTheme*() =
   prefs["findFontColor"] = 0
   prefs["addNodeFontColor"] = 0
 
-
-
-
-# A E S T E T H I C
-
-var archCounter* : int
-var archStarkSeq* : seq[string]
-var archTablex* = initTable[string, Thingy]()
-
-
-proc archCounterGen*(cnt: int):int =
-  archCounter = cnt + 1
-  result = int(archCounter)
-
-proc addChildRepo(parentid : string, title : string)=
-  let now1 = now()
-  var newChild = Thingy()
-  newChild.id = base64encode(archCounterGen(archCounter))
-  newChild.title = title
-  newChild.parent = parentid
-  newChild.ledit = now1.format("yyyy-MM-dd-HH-mm-ss")
-  archTablex[newChild.id] = newChild
-  archTablex[parentid].children.add(newChild.id)
-
-
-proc loadR*(path : string):tuple =
-  try:
-    let fileContent = readFile(path)
-    var middle = uncompress(fileContent)
-    result = middle.fromJson(tuple[archCounter : int, archStarkSeq : seq[string], archTablex :Table[string, Thingy]])
-  except:
-    failedToLoad = true
-    return
-
-
-proc loadRepo(path : string):bool =
-  var qkz = loadR(path)
-  if failedToLoad == true:
-    echo "failed to load"
-    failedToLoad.reset()
-    return false
-  else:
-    archCounter = qkz[0]
-    archStarkSeq = qkz[1]
-    archTablex = qkz[2]
-    return true
-
-
-proc saveRepo*(path : string) = 
-  var xyz = (archCounter, archStarkSeq, archTablex).toJson()
-  var xy2 = xyz.compress()
-  writeFile(path, xy2) 
-
-
-
-
-proc deepPasteRepo(parent : string, currentCopyId : string) = #The Crown Jewel
-  var parent = parent
-  var currentCopyId = currentCopyId
-  for i,v in tablex[currentCopyId].children:
-    addchildRepo(parent, tablex[v].title)
-    archTablex[archTablex[parent].children[i]].data = tablex[v].data
-    if tablex[v].children.len() > 0:
-      deepPasteRepo(archTablex[parent].children[i], v)
-
-
-
-proc pasteToArchRepo(currentParentId : string) =
-      if copyStatus == deepCopyx: #Do not ever touch
-        if currentParentId.len() > 0:
-          addchildRepo("root",copySingleNodeTitle) 
-          var gitFakeId = archTablex[archTablex["root"].children[^1]].id
-          archTablex[gitFakeId].data = copySingleNodeData
-          deepPasteRepo(gitFakeId, currentCopyId)
-
-
-
-proc archivedRepo*(currentParentId : string):bool =
-  if loadRepo(getString(prefs["archivedRepo"])):
-    pasteToArchRepo(currentParentId)
-    #cleanupChild(copySingleNodeTitle) why this never worked? should be safe
-    #removeChild(copySingleNodeTitle) 
-    saveRepo(getString(prefs["archivedRepo"]))
-    archCounter = 0
-    archStarkSeq.reset()
-    archTablex.reset()
-    return true
-  else:
-    return false
 
 
 
