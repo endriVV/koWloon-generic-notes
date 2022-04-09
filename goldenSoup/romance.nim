@@ -4,19 +4,6 @@ import watermelon
 
 
 
-proc generateGrandParents*(childId : string):seq[string] = 
-  var tempGrandParentId : seq[string]
-  var parId = tablex[childId].parent
-  if tablex[parId].id == "root":
-    tempGrandParentId.add("root")
-    return tempGrandParentId
-  else:
-     tempGrandParentId.add(tablex[parId].id)
-     generateGrandParents(tablex[parId].id)
-
-
-
-
 
 # A E S T E T H I C
 

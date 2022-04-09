@@ -28,7 +28,7 @@ proc removeChild*(childId : string)=
 
 
 proc cleanupChild*(childId : string)= 
-  if childId == "root" or childId == "ninjaroot":
+  if childId == "root" or childId == "ninjaroot" or childId == "archroot":
     return
   else:
     var par = tablex[childId].parent
@@ -92,12 +92,12 @@ proc deepCopy*(currentNode : string) =
 
 
 
-proc trackBackToRoot(destinationPar : string) =
+proc trackBackToRoot(currentRootId : string, destinationPar : string) =
   traceRoot.add(destinationPar)
-  if tablex[destinationPar].parent == "root" or  tablex[destinationPar].parent.len == 0 :
+  if tablex[destinationPar].parent == currentRootId or  tablex[destinationPar].parent.len == 0 :
     return
   else: 
-    trackBackToRoot(tablex[destinationPar].parent)
+    trackBackToRoot(currentRootId, tablex[destinationPar].parent)
 
 
 
@@ -117,7 +117,7 @@ proc deepPaste(parent : string, currentCopyId : string) = #The Crown Jewel
 
 
 
-proc paste*(currentParentId : string):bool =
+proc paste*(currentRootId: string, currentParentId : string):bool =
   if copyStatus == singleCopyx:
     addchild(currentParentId,copySingleNodeTitle)
     tablex[tablex[currentParentId].children[^1]].data = copySingleNodeData
@@ -128,8 +128,8 @@ proc paste*(currentParentId : string):bool =
       tablex[tablex[currentParentId].children[^1]].data = copyContextNodesData[i]
 
   if copyStatus == deepCopyx: #Do not ever touch
-    addchild("root",copySingleNodeTitle) 
-    var gitFakeId = tablex[tablex["root"].children[^1]].id
+    addchild(currentRootId,copySingleNodeTitle) 
+    var gitFakeId = tablex[tablex[currentRootId].children[^1]].id
     tablex[gitFakeId].data = copySingleNodeData
     deepPaste(gitFakeId, currentCopyId)
     cleanupChild(gitFakeId)
@@ -137,8 +137,8 @@ proc paste*(currentParentId : string):bool =
     tablex[gitFakeId].parent = currentParentId
 
   if copyStatus == deepCutx:
-    trackBackToRoot(currentParentId)
-    if currentCopyId notin traceRoot or currentParentId == "root":
+    trackBackToRoot(currentRootId,currentParentId)
+    if currentCopyId notin traceRoot or currentParentId == currentRootId:
       cleanupChild(currentCopyId)
       tablex[currentParentId].children.add(currentCopyId)
       tablex[currentCopyId].parent = currentParentId

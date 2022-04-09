@@ -51,11 +51,13 @@ proc main(bootstarter : bool) =
 
   var modeStatus = addx
 
+  var archMode = ""
 
+  var currentRootId = "root"
   var currentGrandParentId : seq[string]
   var tempGrandParentId : seq[string]
-  var currentParentId = "root"
-  var currentParentPath = "root"
+  var currentParentId = currentRootId
+  var currentParentPath = ""
   var currentChildren : seq[string]
   var currentNode : string
 
@@ -113,9 +115,10 @@ proc main(bootstarter : bool) =
       idBackup
       idToggleStarks
       idStarkList
-      idArchivedRepo
+      idArchiveElement
       idAddView
       idCheckUpdates
+      idToggleArchive
 
 
   let menuBar = MenuBar(frame)
@@ -160,10 +163,12 @@ proc main(bootstarter : bool) =
   menuCopy.appendSeparator()
   menuCopy.append(idPaste, "&Paste\tF8", "Paste")
   menuCopy.appendSeparator()
-  menuCopy.append(idArchivedRepo, "&Archive", "Deep Cuts the current node to a secondary Archive. Set up the path in the [Preferences] first")
+  menuCopy.append(idArchiveElement, "&Archive Element", "Deep Cuts the current node to the Archive")
   let menuUtils = Menu(menuBar, "&Utils")
   menuUtils.append(idToggleStarks,"&Add / Remove Bookmark","Toggled the favorite status of the current node")
-  menuUtils.append(idStarkList,"&Bookmarks List","Displays all the current favorite nodes")
+  menuUtils.append(idStarkList,"&View Bookmarks List","Displays all the current favorite nodes")
+  menuUtils.appendSeparator()
+  menuUtils.append(idToggleArchive,"&Toggle Archive","Enter or Exit Archive List")
   menuUtils.appendSeparator()
   menuUtils.append(idExportNote,"&Export Note","Export current note")
   menuUtils.append(idExportContext,"&Export Context","Export current context")
@@ -197,7 +202,7 @@ proc main(bootstarter : bool) =
   menuContext.appendSeparator()
   menuContext.append(idPaste, "&Paste\tF8", "Paste")
   menuContext.appendSeparator()
-  menuContext.append(idArchivedRepo, "&Archive", "Deep Cuts the current node to a secondary Archive. Set up the path in the [Preferences] first")
+  menuContext.append(idArchiveElement, "&Archive Element", "Deep Cuts the current node to the Archive")
   let pasteContext = Menu()
   pasteContext.append(idPaste, "&Paste\tF8", "Paste")
 
@@ -214,6 +219,7 @@ proc main(bootstarter : bool) =
   let addnodeButton = Button(boxFour, label="+")
   let plusButton = Button(boxFour, label="↪")
   let minusButton = Button(boxFour, label="↩")
+  let searchButton = Button(boxThree, label="🔍")
   let searchCombo = ComboBox(boxThree, value="Nodes",
     choices=["Nodes", "Notes", "Both"],
     style=wCbReadOnly)
@@ -323,16 +329,21 @@ proc main(bootstarter : bool) =
           inputSearch:
               top = boxThree.top
               left = boxThree.left
+              width = inputSearch.width
+          searchButton:
+              top = boxThree.top
+              left = inputSearch.right + 5
+              width = inputSearch.width / 4        
           searchCombo:
               top = boxThree.top
-              left = inputSearch.right + 10
+              left = searchButton.right + 8
           ctxCheck:
               top = boxThree.top
-              left = searchCombo.right + 30
+              left = searchCombo.right + 20
               width = inputSearch.width / 2
           keepCheck:
               top = boxThree.top
-              left = ctxCheck.right + 7
+              left = ctxCheck.right + 5
               width = inputSearch.width / 2
           helperButton:
               top = boxThree.top
@@ -347,11 +358,11 @@ proc main(bootstarter : bool) =
     if status == true:
       unsaved = true
       saveMark = "*"
-      frame.title = fmt"{saveMark}{namedrop}{ver}- [{archiveName}]"
+      frame.title = fmt"{saveMark}{namedrop}{ver}- [{archiveName}]{archMode}"
     else:
       unsaved = false
       saveMark = ""
-      frame.title = fmt"{saveMark}{namedrop}{ver}- [{archiveName}]"
+      frame.title = fmt"{saveMark}{namedrop}{ver}- [{archiveName}]{archMode}"
 
 
   # A E S T E T H I C
@@ -459,7 +470,7 @@ proc main(bootstarter : bool) =
       status.setStatusText(currentParentPath & "/" & tablex[currentNode].title)
       dataBox.clear()
       dataBox.setValue(tablex[currentNode].data)
-      frame.title = fmt"{saveMark}{namedrop}{ver}- [{archiveName}]"
+      frame.title = fmt"{saveMark}{namedrop}{ver}- [{archiveName}]{archMode}"
     else:
       getInside()
       status.setStatusText(currentParentPath & "/..")
@@ -481,7 +492,7 @@ proc main(bootstarter : bool) =
       dataBox.setValue(tablex[currentNode].data)
       status.setStatusText(fmt"{currentParentPath}")
       currentParentPath.removeSuffix("/" & tablex[currentNode].title) #NEAT! Never change
-      frame.title = fmt"{saveMark}{namedrop}{ver}- [{archiveName}]"
+      frame.title = fmt"{saveMark}{namedrop}{ver}- [{archiveName}]{archMode}"
 
 
 
@@ -589,7 +600,7 @@ proc main(bootstarter : bool) =
 
   proc pasteGUI() =
     if modeStatus == addx and currentParentId.len() > 0:
-      var pasteRes = paste(currentParentId)
+      var pasteRes = paste(currentRootId, currentParentId)
       if pasteRes == true:
           inputList.clear()
           currentChildren = tablex[currentParentId].children
@@ -799,7 +810,6 @@ proc main(bootstarter : bool) =
   proc replaceGUI() =
     var aa = dataBox.getSelection().a
     var bb = dataBox.getSelection().b
-    echo dataBox.getValue[aa + offset .. bb + offset] 
     if dataBox.getValue[aa + offset .. bb + offset].toLowerAscii == searchTerm:
       var replacer = inputList.getValue()
       dataBox.remove(dataBox.getSelection())
@@ -1012,7 +1022,7 @@ proc main(bootstarter : bool) =
       if tablex[currentParentId].children.len > 0:
         contextSearchNodes(currentParentId, searchCombo.getSelection())
     else:
-      contextSearchNodes("root", searchCombo.getSelection())
+      contextSearchNodes(currentRootId, searchCombo.getSelection())
 
 
 
@@ -1086,7 +1096,7 @@ proc main(bootstarter : bool) =
   # A E S T E T H I C
 
 
-  proc checkDobuleCheckandTripleCheck() =
+  proc checkDobuleCheckandTripleCheckUnsaved() =
     if unsaved == true:
       setUnsaved(true)
     else:
@@ -1546,9 +1556,54 @@ proc main(bootstarter : bool) =
       status.setStatusText("[Preferences Mode] press Esc to Exit")
       frame.title = fmt"{saveMark}{namedrop}{ver}- [Preferences Mode]"
 
+
+
+
+
   # A E S T E T H I C
 
 
+  proc generateGrandParents(childId : string) = 
+    var parId = tablex[childId].parent
+    if parId == currentRootId:
+      tempGrandParentId.add(currentRootId)
+      return
+    else:
+      tempGrandParentId.add(parId)
+      generateGrandParents(parId)
+
+
+
+
+
+  # A E S T E T H I C
+
+
+
+
+  proc archiveElement()=
+    if currentNode.len > 0:
+      deepCopy(currentNode)
+      cleanupChild(currentCopyId)
+      tablex["archroot"].children.add(currentCopyId)
+      tablex[currentCopyId].parent = "archroot"
+      cleanCopyVars()
+      inputList.clear()
+      currentChildren = tablex[currentParentId].children
+      displayChildrenTitles()
+      currentNode = currentChildren[^1]
+      dataList.setSelection(find(currentChildren,currentNode))
+      dataBox.clear()
+      dataBox.add(tablex[currentNode].data)
+      status.setStatusText("Node pasted")
+      starkSeqCheckArchive()
+      setUnsaved(true)
+
+
+
+
+
+  # A E S T E T H I C
 
 
   proc closedGUI() =
@@ -1600,6 +1655,7 @@ proc main(bootstarter : bool) =
     modifyOff()
 
 
+
   proc openGUI() =
     modeStatus.reset()
     menuFile.enable()
@@ -1643,6 +1699,10 @@ proc main(bootstarter : bool) =
 
 
 
+  # A E S T E T H I C
+
+
+
   proc activateNew() =
     frame.title = fmt"{saveMark}{namedrop}{ver}- [New Archive / Open Archive]"
     status.setStatusText("No archive detected. Create it or open an existing one")
@@ -1652,8 +1712,10 @@ proc main(bootstarter : bool) =
     menuFile.disable(menuFile.findText("Add View"))
 
 
+
   proc activateStark() =
     modeStatus = starkx
+    starkSeqCheckArchive()
     frame.title = fmt"{saveMark}{namedrop}{ver}- [Bookmarks Mode]"
     menuNode.disable(menuNode.findText("Add Node\tCtrl+Down"))
     menuEdit.disable()
@@ -1691,7 +1753,7 @@ proc main(bootstarter : bool) =
 
   proc activateSearch() =
     modeStatus = search
-    frame.title = fmt"{saveMark}{namedrop}{ver}- [Find Mode] Searching: '{searchTerm}'"
+    frame.title = fmt"{saveMark}{namedrop}{ver}-{archMode} [Find Mode] Searching: '{searchTerm}'"
     menuNode.disable(menuNode.findText("Add Node\tCtrl+Down"))
     menuEdit.disable(menuEdit.findText("Notes to Nodes\tCtrl+P"))
     menuEdit.disable(menuEdit.findText("Zoom in Node\tCtrl+Enter"))
@@ -1747,26 +1809,31 @@ proc main(bootstarter : bool) =
 
 
 
+  # A E S T E T H I C
+
+
+
+
 
   proc addMode()=
-    if currentParentId == "ninjaroot" and tablex["root"].children.len() > 0:
+    if currentParentId == "ninjaroot" and tablex[currentRootId].children.len() > 0:
       dataList.clear()
       dataBox.clear()
-      currentParentId = "root"
-      currentNode = tablex["root"].children[0]
+      currentParentId = currentRootId
+      currentNode = tablex[currentRootId].children[0]
       currentChildren = tablex[currentParentId].children
       displayChildrenTitles()
       dataList.setSelection(0)
       dataBox.setValue(tablex[currentNode].data)
       removeChild("ninjaroot")
-    elif currentParentId == "ninjaroot" and tablex["root"].children.len() == 0:
-      currentParentId = "root"
+    elif currentParentId == "ninjaroot" and tablex[currentRootId].children.len() == 0:
+      currentParentId = currentRootId
       status.setStatusText(fmt"{currentParentPath}/..")
       removeChildGUI("ninjaroot")
     elif currentNode.len() > 0:
       dataList.clear()
       tempGrandParentId.reset()
-      tempGrandParentId = generateGrandParents(tablex[currentNode].id)
+      generateGrandParents(currentNode)
       tempGrandParentId.reverse(tempGrandParentId.low,tempGrandParentId.high)
       currentParentId = tempGrandParentId[^1]
       currentGrandParentid = tempGrandParentId[0 .. ^ 2]
@@ -1775,20 +1842,21 @@ proc main(bootstarter : bool) =
       dataList.setSelection(find(currentChildren,tablex[currentNode].id))
       dataBox.clear()
       dataBox.setValue(tablex[currentNode].data)
-      currentParentPath = generatePathUtilsPar(currentNode)
+      currentParentPath = "/" & generatePathUtilsPar(currentNode)
       status.setStatusText(currentParentPath & "/" & tablex[currentNode].title)
-    elif currentNode.len() == 0 and tablex["root"].children.len() > 0:
+    elif currentNode.len() == 0 and tablex[currentRootId].children.len() > 0:
       dataList.clear()
       dataBox.clear()
-      currentNode = tablex["root"].children[0]
-      currentParentId = "root"
+      currentNode = tablex[currentRootId].children[0]
+      currentParentId = currentRootId
       currentChildren = tablex[currentParentId].children
       currentGrandParentid.reset()
+      currentParentPath = ""
       displayChildrenTitles()
       dataList.setSelection(0)
       dataBox.setValue(tablex[currentNode].data)
-    elif tablex["root"].children.len() == 0:
-      currentParentId = "root"
+    elif tablex[currentRootId].children.len() == 0:
+      currentParentId = currentRootId
       currentGrandParentid.reset()
       currentChildren.reset()
       status.setStatusText(fmt"{currentParentPath}/..")
@@ -1803,7 +1871,7 @@ proc main(bootstarter : bool) =
     inputSearch.clear()
     bookmarkingSeq.reset()
     modeStatus = addx
-    frame.title = fmt"{saveMark}{namedrop}{ver}- [{archiveName}]"
+    frame.title = fmt"{saveMark}{namedrop}{ver}- [{archiveName}]{archMode}"
     menuEdit.disable(menuEdit.findText("Find Next\tCtrl+N"))
     menuEdit.disable(menuEdit.findText("Replace\tCtrl+R"))
     menuEdit.disable(menuEdit.findText("Replace all"))
@@ -1826,6 +1894,10 @@ proc main(bootstarter : bool) =
     status.setStatusText("")
     dataList.setFocus()
     setColorW()
+
+
+
+  # A E S T E T H I C
 
 
 
@@ -1867,7 +1939,12 @@ proc main(bootstarter : bool) =
       var helloworld = Thingy()
       helloworld.id = "root"
       helloworld.title = "root"
+      helloworld.s.incl(root)
+      var helloworld2 = Thingy()
+      helloworld2.id = "archroot"
+      helloworld2.title = "archroot"
       tablex["root"] = helloworld
+      tablex["archroot"] = helloworld2  
       prefs["archivePath"] = filex
       save(getString(prefs["archivePath"]))
       loadGUI(getString(prefs["archivePath"]))
@@ -1880,6 +1957,26 @@ proc main(bootstarter : bool) =
       prefs["archivePath"] = filesnz[0]
       loadGUI(filesnz[0])
 
+
+  # A E S T E T H I C
+
+
+
+  proc toggleArchive()=
+    if currentRootId == "root":
+      currentRootId = "archroot"
+      archMode = "  .:Archive:."
+    else:
+      currentRootId = "root"
+      archMode = ""
+    currentNode.reset()
+    currentChildren.reset()
+    currentParentId.reset()
+    currentGrandParentid.reset()
+    addmode()
+
+
+  # A E S T E T H I C
 
 
 
@@ -2014,7 +2111,24 @@ proc main(bootstarter : bool) =
       modifyNode()  
 
 
-
+  searchButton.connect(wEvent_Button) do (event: wEvent):
+    if inputSearch.getValue() == searchTerm and searchTerm.len > 0:
+      findNextGUI()
+      inputSearch.setFocus()
+    else:
+      searchTerm = inputSearch.getValue()
+      wrapperSearchNodes()
+      if searchResultsId.len() > 0:
+        if modeStatus == addx:
+          openGUI()
+          activateSearch()
+        elif modeStatus == search:
+          reloadSearch()
+      else:
+        status.setStatusText("Found no results :(")
+        if currentChildren.len == 0:
+          currentNode.reset()
+          currentParentId.reset()
 
 
 
@@ -2264,7 +2378,7 @@ proc main(bootstarter : bool) =
 
 
   frame.wEvent_SetFocus do (event: wEvent):
-    checkDobuleCheckandTripleCheck()
+    checkDobuleCheckandTripleCheckUnsaved()
     if currentChildren.len > 0:
       if modeStatus == addx:
         currentChildren = tablex[currentParentId].children
@@ -2285,9 +2399,13 @@ proc main(bootstarter : bool) =
       dataList.setSelection(find(currentChildren,tablex[currentNode].id))
 
 
-  frame.idArchivedRepo do ():
+  frame.idArchiveElement do ():
     if currentNode.len > 0:
-      discard
+      archiveElement()
+
+
+  frame.idToggleArchive do ():
+    toggleArchive()
 
 
   frame.idStarkList do ():
@@ -2313,7 +2431,6 @@ proc main(bootstarter : bool) =
 
   frame.idCheckUpdates do ():
     check4updoots()
-
 
 
 

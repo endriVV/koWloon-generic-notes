@@ -5,6 +5,7 @@ import std / [tables]
 type
   MyFlag* = enum
     stark
+    root
     synchro
     tracked
 

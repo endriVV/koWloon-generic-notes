@@ -89,7 +89,7 @@ proc generatePath*(currentNode:string):seq[string] =
   var reversePath : seq[string]
   var cp = tablex[currentNode].parent
   reversePath.add(tablex[cp].title)
-  if tablex[cp].title == "root":
+  if tablex[cp].title == "root" or tablex[cp].title == "archroot" :
     #reversePath.add("root")
     return reversePath
   else:
@@ -99,8 +99,7 @@ proc generatePath*(currentNode:string):seq[string] =
 
 
 
-
-proc generatePathUtils*(id : string):string = #MAYBE CIGARETTE?
+proc generatePathUtils*(id : string):string = 
   var rev = generatePath(id)
   rev = rev[0 .. ^2]
   rev.reverse()
@@ -109,7 +108,7 @@ proc generatePathUtils*(id : string):string = #MAYBE CIGARETTE?
 
 
 
-proc generatePathUtils1to1*(id : string):string = #MAYBE CIGARETTE?
+proc generatePathUtils1to1*(id : string):string = 
   var rev = generatePath(id)
   rev = rev[0 .. ^2]
   rev.reverse()
@@ -117,13 +116,22 @@ proc generatePathUtils1to1*(id : string):string = #MAYBE CIGARETTE?
   return rev.join("\\")
 
 
-proc generatePathUtilsPar*(id : string):string = #MAYBE CIGARETTE?
+
+proc generatePathUtilsPar*(id : string):string = 
   var rev = generatePath(id)
+  discard rev.pop()
   rev.reverse()
   return rev.join("/")
 
 
-proc globalWalk*(id : string):string = #MAYBE CIGARETTE?
+proc generatePathUtilsForStarkCheck*(id : string):string = 
+  var rev = generatePath(id)
+  result = rev.pop()
+
+
+
+
+proc globalWalk*(id : string):string = 
   var id = id
   var data : string
   if tablex[id].children.len() > 0:
@@ -272,6 +280,7 @@ proc backupMaker*():bool =
     createDir(temp & "\\koWBackup")
     save(temp & "\\koWBackup\\" & dtformatted & "backup.kgn")
     result = exportGlobal("root")
+    result = exportGlobal("archroot")
     prefs["exportPath"] = temp
     return true
   except:
@@ -333,13 +342,13 @@ proc tealTheme*() =
   prefs["addNodeFontColor"] = 0
 
 proc savanaTheme*() =
-  prefs["notesBgColor"] = 12439255
+  prefs["notesBgColor"] = 12835051 #or 14150135
   prefs["nodesBgColor"] = 12439255
-  prefs["findBgColor"] = 12439255
+  prefs["findBgColor"] = 12835051
   prefs["addNodeBgColor"] = 12439255
-  prefs["appliqueNotesColor"] = 12439255
+  prefs["appliqueNotesColor"] = 12835051
   prefs["appliqueNodesColor"] = 12439255
-  prefs["appliqueFindColor"] = 12439255
+  prefs["appliqueFindColor"] = 12835051
   prefs["appliqueAddNodeColor"] = 12439255
   prefs["notesFontColor"] = 0
   prefs["nodesFontColor"] = 0
@@ -371,7 +380,6 @@ proc isUpdated*():Option[bool]=
     var res = fetch(req)
     var jsonNode = res.body.fromJson(updoots)
     var tagz = jsonNode.tag_name
-    echo tagz
     if tagz > ver4updoot:
       return some(false)
     else:
