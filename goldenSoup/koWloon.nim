@@ -465,6 +465,8 @@ proc main(bootstarter : bool) =
       currentNode.reset() #important or parent will lose his note due to update
       dataList.clear()
       dataBox.clear()
+      currentChildren.reset()
+      datalist.append(fmt" .. / ({tablex[currentParentId].title})") #visual stub
 
 
 
@@ -1905,7 +1907,7 @@ proc main(bootstarter : bool) =
         dataBox.showPosition(0)
         dataList.setFocus()
         status.setStatusText("/" & generatePathUtils(currentNode))
-      elif modeStatus == addx:
+      elif modeStatus == addx and currentChildren.len > 0:
         currentNode = currentChildren[dataList.getSelection()]
         #currentParentId = tablex[currentNode].parent #pilot
         status.setStatusText(currentParentPath & "/" & tablex[currentNode].title)
@@ -1921,7 +1923,7 @@ proc main(bootstarter : bool) =
         dataBox.showPosition(0)
         dataList.setFocus()
         status.setStatusText("/" & generatePathUtils(currentNode))
-      else:
+      elif modeStatus == docx or modeStatus == prefx:
         currentNode = currentChildren[dataList.getSelection()]
         dataBox.clear()
         dataBox.add(tablex[currentNode].data) 
@@ -2082,14 +2084,15 @@ proc main(bootstarter : bool) =
 
 
   boxTwo.wEvent_ContextMenu do (event: wEvent):
-    if modeStatus == addx or modeStatus == search or modeStatus == starkx:
-      if dataList.hitTest(event.mousePos[0],event.mousePos[1]) != -1:
-        datalist.setSelection(dataList.hitTest(event.mousePos[0],event.mousePos[1]))
-        currentNode = currentChildren[dataList.getSelection()]
-        status.setStatusText(currentParentPath & "/" & tablex[currentNode].title)
-        frame.popupMenu(menuContext)
-      else:
-        frame.popupMenu(pasteContext)
+    if currentNode.len > 0:
+      if modeStatus == addx or modeStatus == search or modeStatus == starkx:
+        if dataList.hitTest(event.mousePos[0],event.mousePos[1]) != -1:
+          datalist.setSelection(dataList.hitTest(event.mousePos[0],event.mousePos[1]))
+          currentNode = currentChildren[dataList.getSelection()]
+          status.setStatusText(currentParentPath & "/" & tablex[currentNode].title)
+          frame.popupMenu(menuContext)
+        else:
+          frame.popupMenu(pasteContext)
 
 
   frame.idModify do ():
