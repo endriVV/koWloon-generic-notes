@@ -33,5 +33,5 @@ https://user-images.githubusercontent.com/103033140/162613961-6c4fd77e-f117-411e
 
 # FAQ:
 ## Why does my Antivirus say that Kgn is virus infected?
-Kgn is virus-free. It does not include any spam, adware or spyware.
+Kgn is virus-free. It does not include any spam, adware or spyware. <br />
 Nim executables get a lot of false positive detection, see here on [Nim forum](https://forum.nim-lang.org/t/7885)
