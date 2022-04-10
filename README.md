@@ -21,9 +21,7 @@ Install Nim and the needed libraries: Wnim, Winim, Jsony, Puppy, Supersnappy, Ni
 
 # Demo:
 
-https://user-images.githubusercontent.com/103033140/162403931-fb121d35-f1d2-4c51-8d29-ce193b2f55c3.mp4
-
-
+https://user-images.githubusercontent.com/103033140/162613961-6c4fd77e-f117-411e-a102-15bc287f0c42.mp4
 
 
 
