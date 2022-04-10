@@ -21,9 +21,7 @@ Install Nim and the needed libraries: Wnim, Winim, Jsony, Puppy, Supersnappy, Ni
 
 # Demo:
 
-https://user-images.githubusercontent.com/103033140/162403931-fb121d35-f1d2-4c51-8d29-ce193b2f55c3.mp4
-
-
+https://user-images.githubusercontent.com/103033140/162613961-6c4fd77e-f117-411e-a102-15bc287f0c42.mp4
 
 
 
@@ -31,3 +29,9 @@ https://user-images.githubusercontent.com/103033140/162403931-fb121d35-f1d2-4c51
 
 💕 Nim, Nim Libraries, Nim Community <br />
  Pets for the logo were taken from talented [xoMikasa](https://emoji.gg/user/647561486712963101) at [emoji.gg](https://emoji.gg)
+
+
+# FAQ:
+## Why does my Antivirus say that Kgn is virus infected?
+Kgn is virus-free. It does not include any spam, adware or spyware. <br />
+Nim executables get a lot of false positive detection, see here on [Nim forum](https://forum.nim-lang.org/t/7885)
