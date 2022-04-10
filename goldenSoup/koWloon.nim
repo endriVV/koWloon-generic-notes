@@ -2091,6 +2091,56 @@ proc main(bootstarter : bool) =
       addmode()
 
 
+  addnodeButton.wEvent_MouseEnter do (event: wEvent):
+    status.setStatusText("Add node")
+
+  addnodeButton.wEvent_MouseLeave do (event: wEvent):
+    status.setStatusText("")
+
+
+
+  plusButton.wEvent_MouseEnter do (event: wEvent):
+    status.setStatusText("Zoom in to subnodes")
+
+  plusButton.wEvent_MouseLeave do (event: wEvent):
+    status.setStatusText("")
+
+
+  minusButton.wEvent_MouseEnter do (event: wEvent):
+    status.setStatusText("Zoom out to parent node")
+
+  minusButton.wEvent_MouseLeave do (event: wEvent):
+    status.setStatusText("")
+
+
+  searchButton.wEvent_MouseEnter do (event: wEvent):
+    status.setStatusText("Search")
+
+  searchButton.wEvent_MouseLeave do (event: wEvent):
+    status.setStatusText("")
+
+
+  searchCombo.wEvent_MouseEnter do (event: wEvent):
+    status.setStatusText("Select where to Search")
+
+  searchCombo.wEvent_MouseLeave do (event: wEvent):
+    status.setStatusText("")
+
+
+  ctxCheck.wEvent_MouseEnter do (event: wEvent):
+    status.setStatusText("When activated limits search to current Node and its subnodes")
+
+  ctxCheck.wEvent_MouseLeave do (event: wEvent):
+    status.setStatusText("")
+
+
+  keepCheck.wEvent_MouseEnter do (event: wEvent):
+    status.setStatusText("When activated stacks new Searches on top of results of old ones")
+
+  keepCheck.wEvent_MouseLeave do (event: wEvent):
+    status.setStatusText("")
+
+
   plusButton.connect(wEvent_Button) do (event: wEvent):
     if currentNode.len() > 0:
      getInsideGUI()
