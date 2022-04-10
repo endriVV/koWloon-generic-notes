@@ -23,7 +23,8 @@ let github = "https://github.com/endriVV/koWloon-generic-notes"
 var archiveName : string
 let ver = fmt" - {ver4updoot} "
 var bookmarkingSeq : seq[string]
-
+const slurpy=staticRead("gyoza/Untitled3.ico")
+const slurpy2=staticRead("gyoza/Untitled5.png")
 
 
 proc main(bootstarter : bool) =
@@ -37,8 +38,6 @@ proc main(bootstarter : bool) =
   let app = App()
   let frame = Frame(title=fmt"{saveMark}{namedrop}{ver} []", size=(850, 650))
   let panel = Panel(frame)
-
-  const slurpy=staticRead("gyoza/Untitled3.ico")
   frame.icon = Icon(slurpy)
 
 
@@ -1342,7 +1341,7 @@ proc main(bootstarter : bool) =
     with textctrl2:
       writeText("\n")
       setStyle(lineSpacing=1.5, indent=288)
-      writeImage(Image("gyoza/Untitled5.png"), 0.6)
+      writeImage(Image(slurpy2), 0.6)
       writeText("\n")
       setFormat(smallFont, fgColor=wBlack)
       writeText(t1)
@@ -1383,7 +1382,7 @@ proc main(bootstarter : bool) =
     with textctrl2:
       writeText("\n")
       setStyle(lineSpacing=1.5, indent=288)
-      writeImage(Image("gyoza/Untitled5.png"), 0.6)
+      writeImage(Image(slurpy2), 0.6)
       writeText("\n")
       writeText(t1)
       setFormat(smallFont, fgColor=wGreen)
