@@ -1639,6 +1639,8 @@ proc main(bootstarter : bool) =
     ctxCheck.disable()
     noteCheck.disable()
     nodeCheck.disable()
+    searchButton.disable()
+    addNodeButton.disable()
     boxFour.label = "Disabled: "
     boxFour.hide()
     boxFour.show()
@@ -1687,6 +1689,8 @@ proc main(bootstarter : bool) =
     plusButton.enable()
     minusButton.enable()
     keepCheck.enable()
+    searchButton.enable()
+    addNodeButton.enable()
     ctxCheck.enable()
     noteCheck.enable()
     nodeCheck.enable()
