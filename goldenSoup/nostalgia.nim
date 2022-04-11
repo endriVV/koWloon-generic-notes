@@ -11,6 +11,7 @@ doctitles.add("Delete Node")
 doctitles.add("Copying Nodes")
 doctitles.add("Export")
 doctitles.add("Archive")
+doctitles.add("Notes To Nodes")
 doctitles.add("Minor Functionality")
 doctitles.add("Non Core Functionality")
 doctitles.add("Known limitations")
@@ -29,8 +30,9 @@ Welcome to koWloon (generic) notes:""" & "\r\n" & """
 
 docxnotes.add("""
 The program is structured with four main panels always visible. """ & "\r\n" & """
-- [CTRL + Arrows] shortcuts allow for fast keyboard navigation between panels. """ & "\r\n" & """
-- [CTRL + Enter] and [CTRL + Backspace] perform fast navigation in and outside nodes. """ & "\r\n" & """ 
+The bread and butter of fast keyboard-only navigation are: """ & "\r\n" & """
+- [CTRL + Arrows] Move between the four main panels. """ & "\r\n" & """
+- [CTRL + Enter] + [CTRL + Backspace] Zoom in and outside nodes. """ & "\r\n" & """ 
 More shortcuts are discoverable in the menu descriptions.
 """)
 
@@ -68,9 +70,18 @@ docxnotes.add("""
 - [Archive] will tranfer a Node to a hidden Archive Node, to browse it find the Archive list on the menus.
 """)
 
+docxnotes.add("""
+The following functions can be useful to create nodes quickly from a tabular data source like Excel: """ & "\r\n" & """
+""" & "\r\n" & """
+- [Notes to Nodes] Will import each line of a note in a new node. """ & "\r\n" & """
+- [Notes to Sub-Nodes], [Notes to Sub-Nodes Pivot] and [Notes to line-by-line Notes] are will populate existing nodes with data line by line.
+P.S. (Pivot is used adding text in the [Add Node Field])
+""")
+
+
 
 docxnotes.add("""
-- [Notes to Node]  Will transform each line of a note in a new node.""" & "\r\n" & """
+
 - [Node(s) to Clipboard] Will copy to clipboard the name of the current Node(s).""" & "\r\n" & """
 - [Order Nodes A-Z] Will order the current Nodes from A to Z. """ & "\r\n" & """
 - [Order Nodes Last-Edit] Will order the current Nodes in order of last editing.""" & "\r\n" & """

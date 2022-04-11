@@ -1,5 +1,5 @@
 import wNim / [wApp,wFontDialog, wImage, wDirDialog, wColorDialog ,wFileDialog, wFont, wCheckBox, wFrame, wPanel, wButton, wTextCtrl, wUtils, wListCtrl, wStaticBox, wMessageDialog, wStatusBar, wIcon, wBitmap, wMenuBar, wMenu, wMenuBarCtrl,wDataObject,wListBox,wStaticText]
-import std / [strformat, strutils, tables, algorithm, os, times, unicode, sequtils, with, options]
+import std / [strformat, strutils, tables, algorithm, os, times, unicode, sequtils, with, options,enumerate]
 import winim/winstr, winim/inc/shellapi
 
 import niprefs
@@ -86,6 +86,9 @@ proc main(bootstarter : bool) =
       idClipboard
       idClipboards   
       idNotesToNodes
+      idNotesToSubNodes
+      idNotesToSubNodesPivot
+      idNotesToNotes
       idEsc
       idExportNote
       idExportContext
@@ -140,6 +143,9 @@ proc main(bootstarter : bool) =
   menuEdit.append(idReplaceAll, "&Replace all", "Replace all")
   menuEdit.appendSeparator()
   menuEdit.append(idNotesToNodes, "&Notes to Nodes\tCtrl+P", "Send all the current Notes, line by line, to Node List")
+  menuEdit.append(idNotesToSubNodes, "&Notes to Sub-Nodes", "Send all the current Notes, line by line, as SubNode to pre-existing Nodes")
+  menuEdit.append(idNotesToSubNodesPivot, "&Notes to Sub-Nodes [Pivot]", "Send all the current Notes, line by line, as Pivot SubNode to pre-existing Nodes")
+  menuEdit.append(idNotesToNotes, "&Notes to line-by-line Notes", "Send all the current Notes, line by line, as Note to pre-existing Nodes")
   let menuNode = Menu(menuBar, "&Nodes")
   menuNode.append(idRefresh, "&RefreshNode\tF5", "Refresh a node")
   menuNode.appendSeparator()
@@ -742,6 +748,73 @@ proc main(bootstarter : bool) =
     dataList.setSelection(0)
     dataBox.clear()
     dataBox.setValue(tablex[currentNode].data)
+
+
+  proc notesToSubNodes()=
+    var temp2 = databox.getValue()
+    if temp2.countLines() <= tablex[currentParentId].children.len():
+      for i, v in enumerate temp2.splitlines:
+        addchild(tablex[currentParentId].children[i],v)
+      if currentNode.len > 0:
+        tablex[currentNode].data.reset()
+      dataList.setFocus()
+      currentChildren = tablex[currentParentId].children
+      displayChildrenTitles()
+      currentNode = currentChildren[0]
+      dataList.setSelection(0)
+      dataBox.clear()
+      dataBox.setValue(tablex[currentNode].data)
+    else:
+      status.setStatusText("Lines to import should be equal or fewer of number of Nodes")
+
+
+  proc notesToSubNodesPivot()=
+    if inputList.getValue() != "":
+      var temp3 = inputList.getValue()
+      inputList.setValue("")
+      var temp2 = databox.getValue()
+      if temp2.countLines() <= tablex[currentParentId].children.len():
+        for i, v in enumerate temp2.splitlines:
+          addchild(tablex[currentParentId].children[i],temp3)
+          if tablex[tablex[tablex[currentParentId].children[i]].children[^1]].data != "":
+            tablex[tablex[tablex[currentParentId].children[i]].children[^1]].data  = tablex[tablex[tablex[currentParentId].children[i]].children[^1]].data  & "\r\n" & v
+          else:
+            tablex[tablex[tablex[currentParentId].children[i]].children[^1]].data  = v
+        if currentNode.len > 0:
+          tablex[currentNode].data.reset()
+        dataList.setFocus()
+        currentChildren = tablex[currentParentId].children
+        displayChildrenTitles()
+        currentNode = currentChildren[0]
+        dataList.setSelection(0)
+        dataBox.clear()
+        dataBox.setValue(tablex[currentNode].data)
+      else:
+        status.setStatusText("Lines to import should be equal or fewer of number of Nodes")
+    else:
+      status.setStatusText("Add text in the Add Node field to Pivot data on it")
+
+
+
+  proc notesToNotes()=
+    var temp2 = databox.getValue()
+    if temp2.countLines() <= tablex[currentParentId].children.len():
+      if currentNode.len > 0:
+        tablex[currentNode].data.reset()
+      for i, v in enumerate temp2.splitlines:
+        if tablex[tablex[currentParentId].children[i]].data != "":
+          tablex[tablex[currentParentId].children[i]].data = tablex[tablex[currentParentId].children[i]].data & "\r\n" & v
+        else:
+          tablex[tablex[currentParentId].children[i]].data = v
+      dataList.setFocus()
+      currentChildren = tablex[currentParentId].children
+      displayChildrenTitles()
+      currentNode = currentChildren[0]
+      dataList.setSelection(0)
+      dataBox.clear()
+      dataBox.setValue(tablex[currentNode].data)
+    else:
+      status.setStatusText("Lines to import should be equal or fewer of number of Nodes")
 
 
   # A E S T E T H I C
@@ -1779,6 +1852,8 @@ proc main(bootstarter : bool) =
     frame.title = fmt"{saveMark}{namedrop}{ver}-{archMode} [Find Mode] Searching: '{searchTerm}'"
     menuNode.disable(menuNode.findText("Add Node\tCtrl+Down"))
     menuEdit.disable(menuEdit.findText("Notes to Nodes\tCtrl+P"))
+    menuEdit.disable(menuEdit.findText("Notes to Sub-Nodes"))
+    menuEdit.disable(menuEdit.findText("Notes to line-by-line Notes"))
     menuEdit.disable(menuEdit.findText("Zoom in Node\tCtrl+Enter"))
     menuEdit.disable(menuEdit.findText("Zoom out Node\tCtrl+Backspace"))
     menuCopy.disable(menuCopy.findText("Paste\tF8"))
@@ -2144,14 +2219,14 @@ proc main(bootstarter : bool) =
 
 
   nodeCheck.wEvent_MouseEnter do (event: wEvent):
-    status.setStatusText("Restrict search to Node only")
+    status.setStatusText("Restricts search to Node only")
 
   nodeCheck.wEvent_MouseLeave do (event: wEvent):
     status.setStatusText("")
 
 
   noteCheck.wEvent_MouseEnter do (event: wEvent):
-    status.setStatusText("Restrict search to Note only")
+    status.setStatusText("Restricts search to Note only")
 
   noteCheck.wEvent_MouseLeave do (event: wEvent):
     status.setStatusText("")
@@ -2159,14 +2234,14 @@ proc main(bootstarter : bool) =
 
 
   ctxCheck.wEvent_MouseEnter do (event: wEvent):
-    status.setStatusText("When activated limits search to current Node and its subnodes")
+    status.setStatusText("Restricts search to current Node and its subnodes")
 
   ctxCheck.wEvent_MouseLeave do (event: wEvent):
     status.setStatusText("")
 
 
   keepCheck.wEvent_MouseEnter do (event: wEvent):
-    status.setStatusText("When activated stacks new Searches on top of results of old ones")
+    status.setStatusText("Stacks new Searches on top of results of old ones")
 
   keepCheck.wEvent_MouseLeave do (event: wEvent):
     status.setStatusText("")
@@ -2323,6 +2398,16 @@ proc main(bootstarter : bool) =
 
   frame.idNotesToNodes do ():
     notesToNodes()
+
+  frame.idNotesToSubNodes do ():
+    notesToSubNodes()
+
+  frame.idNotesToSubNodesPivot do ():
+    notesToSubNodesPivot()
+
+  frame.idNotesToNotes do ():
+    notesToNotes()
+
 
   frame.idUp do ():
     if inputList.hasFocus():
