@@ -71,6 +71,7 @@ proc main(bootstarter : bool) =
   type
     MenuID = enum
       idOpen = wIdUser, idExit, idSave
+      idSaveAs
       idAbout
       idLeft
       idRight
@@ -126,13 +127,15 @@ proc main(bootstarter : bool) =
   let menuBar = MenuBar(frame)
   let menuFile = Menu(menuBar, "&File")
   menuFile.append(idNew, "&New", "Create a new data archive")
-  menuFile.append(idOpen, "&Open", "Load an existing archive")
+  menuFile.append(idOpen, "&Open..", "Load an existing archive")
   menuFile.appendSeparator()
-  menuFile.append(idPrefs, "&Preferences", "Customize")
+  menuFile.append(idSave, "&Save\tCtrl+S", "Save")
+  menuFile.append(idSaveAs, "&Save As ..", "Save as another .kgn archive")
   menuFile.appendSeparator()
   menuFile.append(idAddView, "&Add View", "Opens a new Window to edit the same Notes")
   menuFile.appendSeparator()
-  menuFile.append(idSave, "&Save\tCtrl+S", "Save")
+  menuFile.append(idPrefs, "&Preferences", "Customize")
+  menuFile.appendSeparator()
   menuFile.append(idExit, "&Exit\tCtrl+Q", "Exit")
   let menuEdit = Menu(menuBar, "&Edit")
   menuEdit.append(idPlus, "&Zoom in Node\tCtrl+Enter", "Shift to next subnode level")
@@ -1775,6 +1778,7 @@ proc main(bootstarter : bool) =
     inputList.enable()
     inputSearch.enable()
     menuFile.enable(menuFile.findText("Save\tCtrl+S"))
+    menuFile.enable(menuFile.findText("Save As .."))
     menuFile.enable(menuFile.findText("Add View"))
     menuFile.enable(menuFile.findText("Preferences"))
     menuEdit.enable(menuEdit.findText("Zoom in Node\tCtrl+Enter"))
@@ -1804,6 +1808,7 @@ proc main(bootstarter : bool) =
     status.setStatusText("No archive detected. Create it or open an existing one")
     menuFile.enable()
     menuFile.disable(menuFile.findText("Save\tCtrl+S"))
+    menuFile.disable(menuFile.findText("Save As .."))
     menuFile.disable(menuFile.findText("Preferences"))
     menuFile.disable(menuFile.findText("Add View"))
 
@@ -2054,6 +2059,17 @@ proc main(bootstarter : bool) =
     if filesnz.len != 0:
       prefs["archivePath"] = filesnz[0]
       loadGUI(filesnz[0])
+
+
+  proc saveAsHandler() =
+    let filesnz = FileDialog(frame, message="Save as a new archive", defaultDir = getAppDir(), defaultFile = "koWloon", style = wFdSave or wFdOverwritePrompt, wildcard = "KGN files (*.kgn)|*.kgn").display()
+    if filesnz.len != 0:
+      var filex = filesnz[0] & ".kgn"
+      prefs["archivePath"] = filex
+      setUnsaved(false)
+      save(getString(prefs["archivePath"]))
+      status.setStatusText("Saved as " & getString(prefs["archivePath"]))
+      loadGUI(filex)
 
 
   # A E S T E T H I C
@@ -2595,6 +2611,10 @@ proc main(bootstarter : bool) =
     save(getString(prefs["archivePath"]))
     setUnsaved(false)
     status.setStatusText("Saved")
+
+  frame.idSaveAs do ():
+    if checkUnsaved():
+      saveAsHandler()
 
   frame.idAbout do ():
     abouts()
