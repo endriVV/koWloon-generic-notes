@@ -1,4 +1,4 @@
-import wNim / [wApp,wFontDialog, wImage, wDirDialog, wColorDialog ,wFileDialog, wFont, wCheckBox, wComboBox, wFrame, wPanel, wButton, wTextCtrl, wUtils, wListCtrl, wStaticBox, wMessageDialog, wStatusBar, wIcon, wBitmap, wMenuBar, wMenu, wMenuBarCtrl,wDataObject,wListBox,wStaticText]
+import wNim / [wApp,wFontDialog, wImage, wDirDialog, wColorDialog ,wFileDialog, wFont, wCheckBox, wFrame, wPanel, wButton, wTextCtrl, wUtils, wListCtrl, wStaticBox, wMessageDialog, wStatusBar, wIcon, wBitmap, wMenuBar, wMenu, wMenuBarCtrl,wDataObject,wListBox,wStaticText]
 import std / [strformat, strutils, tables, algorithm, os, times, unicode, sequtils, with, options]
 import winim/winstr, winim/inc/shellapi
 
@@ -218,10 +218,9 @@ proc main(bootstarter : bool) =
   let addnodeButton = Button(boxFour, label="+")
   let plusButton = Button(boxFour, label="↪")
   let minusButton = Button(boxFour, label="↩")
-  let searchButton = Button(boxThree, label="🔍")
-  let searchCombo = ComboBox(boxThree, value="Nodes",
-    choices=["Nodes", "Notes", "Both"],
-    style=wCbReadOnly)
+  let searchButton = Button(boxThree, label="Find")
+  let nodeCheck = CheckBox(boxThree, label="🔗")
+  let noteCheck = CheckBox(boxThree, label="✏️")
   let keepCheck = CheckBox(boxThree, label="Keep")
   let ctxCheck = CheckBox(boxThree, label="Ctx")
   let defaultFont = Font(11, weight=wFontWeightNormal, family= 0)
@@ -234,6 +233,12 @@ proc main(bootstarter : bool) =
   inputSearch.setFont(defaultFont2)
   inputList.setFont(defaultFont2)
   dataBox.setMargin(5) #hmmmmm 
+  nodeCheck.setValue(true)
+
+
+
+
+
 
 
 
@@ -328,22 +333,25 @@ proc main(bootstarter : bool) =
           inputSearch:
               top = boxThree.top
               left = boxThree.left
-              width = inputSearch.width
+              width = boxThree.width / 4
           searchButton:
               top = boxThree.top
               left = inputSearch.right + 5
-              width = inputSearch.width / 4        
-          searchCombo:
+              width = inputSearch.width / 2       
+          nodeCheck:
               top = boxThree.top
               left = searchButton.right + 8
+          noteCheck:
+              top = boxThree.top
+              left = nodeCheck.right + 8
           ctxCheck:
               top = boxThree.top
-              left = searchCombo.right + 20
-              width = inputSearch.width / 2
+              left = noteCheck.right + 15
+
           keepCheck:
               top = boxThree.top
               left = ctxCheck.right + 5
-              width = inputSearch.width / 2
+
           helperButton:
               top = boxThree.top
               right = boxThree.right
@@ -1008,6 +1016,16 @@ proc main(bootstarter : bool) =
 
 
 
+  proc comboLogic():int =
+    if noteCheck.isChecked and nodeCheck.isChecked:
+      return 2
+    elif noteCheck.isChecked:
+      return 1
+    else:
+      return 0
+
+
+
   # A E S T E T H I C
 
 
@@ -1019,9 +1037,9 @@ proc main(bootstarter : bool) =
       searchNotes.reset()
     if ctx == true and currentParentId.len > 0 :
       if tablex[currentParentId].children.len > 0:
-        contextSearchNodes(currentParentId, searchCombo.getSelection())
+        contextSearchNodes(currentParentId, comboLogic())
     else:
-      contextSearchNodes(currentRootId, searchCombo.getSelection())
+      contextSearchNodes(currentRootId, comboLogic())
 
 
 
@@ -1619,7 +1637,8 @@ proc main(bootstarter : bool) =
     minusButton.disable()
     keepCheck.disable()
     ctxCheck.disable()
-    searchCombo.disable()
+    noteCheck.disable()
+    nodeCheck.disable()
     boxFour.label = "Disabled: "
     boxFour.hide()
     boxFour.show()
@@ -1669,7 +1688,8 @@ proc main(bootstarter : bool) =
     minusButton.enable()
     keepCheck.enable()
     ctxCheck.enable()
-    searchCombo.enable()
+    noteCheck.enable()
+    nodeCheck.enable()
     dataBox.clear()
     dataList.clear()
     inputList.clear()
@@ -2119,11 +2139,19 @@ proc main(bootstarter : bool) =
     status.setStatusText("")
 
 
-  searchCombo.wEvent_MouseEnter do (event: wEvent):
-    status.setStatusText("Select where to Search")
+  nodeCheck.wEvent_MouseEnter do (event: wEvent):
+    status.setStatusText("Restrict search to Node only")
 
-  searchCombo.wEvent_MouseLeave do (event: wEvent):
+  nodeCheck.wEvent_MouseLeave do (event: wEvent):
     status.setStatusText("")
+
+
+  noteCheck.wEvent_MouseEnter do (event: wEvent):
+    status.setStatusText("Restrict search to Note only")
+
+  noteCheck.wEvent_MouseLeave do (event: wEvent):
+    status.setStatusText("")
+
 
 
   ctxCheck.wEvent_MouseEnter do (event: wEvent):
@@ -2181,6 +2209,17 @@ proc main(bootstarter : bool) =
 
 
 
+
+  noteCheck.wEvent_CheckBox do (event: wEvent):
+    if noteCheck.isChecked == false:
+      nodeCheck.setValue(true)
+
+  nodeCheck.wEvent_CheckBox do (event: wEvent):
+    if nodeCheck.isChecked == false:
+      noteCheck.setValue(true)
+
+
+
   keepCheck.wEvent_CheckBox do (event: wEvent):
     if keepCheck.isChecked:
       keep = true
@@ -2198,13 +2237,6 @@ proc main(bootstarter : bool) =
       status.setStatusText("Global search enabled")
 
 
-  searchCombo.wEvent_ComboBox do (event: wEvent):
-    if searchCombo.getSelection == 0:
-      status.setStatusText("Find Nodes only")
-    if searchCombo.getSelection == 1:
-      status.setStatusText("Find Notes only")
-    if searchCombo.getSelection == 2:
-      status.setStatusText("Find both Nodes and Nodes")
 
 
   frame.wEvent_Close do (event: wEvent):
