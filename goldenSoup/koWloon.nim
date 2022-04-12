@@ -46,10 +46,10 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
     var t3 = github
 
     let threadId = GetCurrentThreadId()
-    echo threadId, " thread started"
+
 
     var app = App()
-    var frame = Frame(title="About", size=(400, 300))
+    var frame = Frame(title="About", size=(450, 600))
     let textctrl2 = TextCtrl(frame, style=wTeRich or wTeMultiLine or wTeCenter)
     let smallFont = Font(12, weight=900, faceName="Tahoma")
     frame.icon = Icon(slurpy)
@@ -88,6 +88,60 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
 
 
 
+proc createChildThreadUpdate(hMain: HWND) {.thread.} =
+  {.gcsafe.}:
+    var t1 = fmt"{namedrop}{ver}"
+    var t2 = fmt"Author: {author}"
+    var t3 = github
+
+    let threadId = GetCurrentThreadId()
+
+
+    var app = App()
+    var frame = Frame(title="About", size=(450, 600))
+    let textctrl2 = TextCtrl(frame, style=wTeRich or wTeMultiLine or wTeCenter)
+    let smallFont = Font(12, weight=900, faceName="Tahoma")
+    frame.icon = Icon(slurpy)
+    SendMessage(hMain, wEvent_RegisterChildFrame, WPARAM frame.handle, 0)
+
+    var check = isUpdated()
+
+    if check == some(false):
+        t2 = "New updates are available for Kgn! Visit the homepage to download them."
+    if check == some(true):
+        t2 = "Kgn is updated to the latest version. Happy day."
+    if check == none(bool):
+        t2 = "Couldn't connect to the server"
+
+    with textctrl2:
+      writeText("\n")
+      setStyle(lineSpacing=1.5, indent=288)
+      writeImage(Image(slurpy2), 0.6)
+      writeText("\n")
+      writeText(t1)
+      setFormat(smallFont, fgColor=wGreen)
+      writeText("\n")
+      writeText(t2)
+      setFormat(smallFont, fgColor=wBlack)
+      writeText("\n")
+      writeLink(t3, "Github page")
+      writeText("\n")
+
+    textctrl2.wEvent_TextLink do (event: wEvent):
+      if event.mouseEvent == wEvent_LeftUp:
+        let url = textctrl2.range(event.start..<event.end)
+        ShellExecute(0, "open", url, nil, nil, 5)
+  #[ 
+    frame.wEvent_Ping do ():
+      echo threadId, " wEvent_Ping"
+      PostMessage(hMain, wEvent_Pong, WPARAM threadId, 0)
+  ]#
+    frame.wEvent_Destroy do ():
+      SendMessage(hMain, wEvent_UnregisterChildFrame, WPARAM frame.handle, 0)
+
+    frame.show()
+    app.mainLoop()
+    echo threadId, " thread closed"
 
 
 
@@ -1489,51 +1543,7 @@ proc main(bootstarter : bool) =
       inputList.setValue(tablex[currentNode].title)
       inputList.setSelection(0,tablex[currentNode].title.len())
 
-  # A E S T E T H I C
 
-
-
-
-  # A E S T E T H I C
-
-  proc check4updoots() =
-
-    var t1 = fmt"{namedrop}{ver}"
-    var t2 : string
-    var check = isUpdated()
-    if check == some(false):
-        t2 = "New updates are available for Kgn! Visit the homepage to download them."
-    if check == some(true):
-        t2 = "Kgn is updated to the latest version. Happy day."
-    if check == none(bool):
-        t2 = "Couldn't connect to the server"
-    var t3 = github
-    let app2 = App()
-    let frame2 = Frame(title="About", size=(450, 600))
-    let textctrl2 = TextCtrl(frame2, style=wTeRich or wTeMultiLine or wTeCenter)
-    let smallFont = Font(12, weight=900, faceName="Tahoma")
-    frame2.icon = Icon(slurpy)
-    with textctrl2:
-      writeText("\n")
-      setStyle(lineSpacing=1.5, indent=288)
-      writeImage(Image(slurpy2), 0.6)
-      writeText("\n")
-      writeText(t1)
-      setFormat(smallFont, fgColor=wGreen)
-      writeText("\n")
-      writeText(t2)
-      setFormat(smallFont, fgColor=wBlack)
-      writeText("\n")
-      writeLink(t3, "Github page")
-      writeText("\n")
-
-    textctrl2.wEvent_TextLink do (event: wEvent):
-      if event.mouseEvent == wEvent_LeftUp:
-        let url = textctrl2.range(event.start..<event.end)
-        ShellExecute(0, "open", url, nil, nil, 5)
-
-    frame2.center()
-    frame2.show()
 
 
   # A E S T E T H I C
@@ -2689,10 +2699,15 @@ proc main(bootstarter : bool) =
 
   frame.wEvent_Pong do (event: wEvent):
     echo event.wParam, " wEvent_Pong"
-    frame.idCheckUpdates do ():
-      check4updoots()
+
 
 ]#
+
+
+  frame.idCheckUpdates do ():
+    spawn createChildThreadUpdate(frame.handle)
+
+
 
   initFonts()
   initColors()
