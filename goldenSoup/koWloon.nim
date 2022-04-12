@@ -2183,12 +2183,12 @@ proc main(bootstarter : bool) =
 
 
   inputSearch.wEvent_TextEnter do (event: wEvent):
-    if inputSearch.getValue() == searchTerm and searchTerm.len > 0:
+    if inputSearch.getValue() == searchTerm and searchTerm.len > 2:
       findNextGUI()
       inputSearch.setFocus()
     else:
       searchTerm = inputSearch.getValue()
-      if searchTerm.len > 2:
+      if searchTerm.len > 2 and tablex[currentRootId].children.len > 0:
         wrapperSearchNodes()
         if searchResultsId.len() > 0:
           if modeStatus == addx:
@@ -2202,7 +2202,38 @@ proc main(bootstarter : bool) =
             currentNode.reset()
             currentParentId.reset()
       else:
-        status.setStatusText("Please type at least 3 characters")
+        status.setStatusText("Please have at least one node to search, and type at least three characters")
+
+
+
+  searchButton.connect(wEvent_Button) do (event: wEvent):
+    if inputSearch.getValue() == searchTerm and searchTerm.len > 2:
+      findNextGUI()
+      inputSearch.setFocus()
+    else:
+      searchTerm = inputSearch.getValue()
+      wrapperSearchNodes()
+      if searchTerm.len > 2 and tablex[currentRootId].children.len > 0:
+        if searchResultsId.len() > 0:
+          if modeStatus == addx:
+            openGUI()
+            activateSearch()
+          elif modeStatus == search:
+            reloadSearch()
+        else:
+          status.setStatusText("Found no results :(")
+          if currentChildren.len == 0:
+            currentNode.reset()
+            currentParentId.reset()
+      else:
+        status.setStatusText("Please have at least one node to search, and type at least three characters")
+
+
+
+
+
+
+
 
 
   inputList.wEvent_TextEnter do (event: wEvent):
@@ -2326,24 +2357,6 @@ proc main(bootstarter : bool) =
       modifyNode()  
 
 
-  searchButton.connect(wEvent_Button) do (event: wEvent):
-    if inputSearch.getValue() == searchTerm and searchTerm.len > 0:
-      findNextGUI()
-      inputSearch.setFocus()
-    else:
-      searchTerm = inputSearch.getValue()
-      wrapperSearchNodes()
-      if searchResultsId.len() > 0:
-        if modeStatus == addx:
-          openGUI()
-          activateSearch()
-        elif modeStatus == search:
-          reloadSearch()
-      else:
-        status.setStatusText("Found no results :(")
-        if currentChildren.len == 0:
-          currentNode.reset()
-          currentParentId.reset()
 
 
 
