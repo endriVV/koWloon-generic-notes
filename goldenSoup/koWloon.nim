@@ -1,6 +1,6 @@
 import wNim / [wApp,wFontDialog, wImage, wDirDialog, wColorDialog ,wFileDialog, wFont, wCheckBox, wFrame, wPanel, wButton, wTextCtrl, wUtils, wListCtrl, wStaticBox, wMessageDialog, wStatusBar, wIcon, wBitmap, wMenuBar, wMenu, wMenuBarCtrl,wDataObject,wListBox,wStaticText]
-import std / [strformat, strutils, tables, algorithm, os, times, unicode, sequtils, with, options,enumerate]
-import winim/winstr, winim/inc/shellapi
+import std / [threadpool,sets, strformat, strutils, tables, algorithm, os, times, unicode, sequtils, with, options,enumerate]
+import winim/winstr, winim/inc/shellapi, winim/lean
 
 import niprefs
 
@@ -17,14 +17,82 @@ var unsaved = false
 var saveMark = ""
 
 let savefloppy ="\u{1F5AB}"
-let namedrop = "koWloon (generic) notes"
-let author = "endriVV"
+const namedrop = "koWloon (generic) notes"
+const author = "endriVV"
 let github = "https://github.com/endriVV/koWloon-generic-notes"
 var archiveName : string
 let ver = fmt" - {ver4updoot} "
 var bookmarkingSeq : seq[string]
 const slurpy=staticRead("gyoza/Untitled3.ico")
 const slurpy2=staticRead("gyoza/Untitled5.png")
+
+
+const
+  wEvent_RegisterChildFrame = wEvent_App + 1
+  wEvent_UnregisterChildFrame = wEvent_App + 2
+  wEvent_Ping = wEvent_App + 3
+  wEvent_Pong = wEvent_App + 4
+
+
+var childFrames: HashSet[HWND]
+
+
+
+
+proc createChildThreadAbouts(hMain: HWND) {.thread.} =
+  {.gcsafe.}:
+    var t1 = fmt"{namedrop}{ver}"
+    var t2 = fmt"Author: {author}"
+    var t3 = github
+
+    let threadId = GetCurrentThreadId()
+    echo threadId, " thread started"
+
+    var app = App()
+    var frame = Frame(title="About", size=(400, 300))
+    let textctrl2 = TextCtrl(frame, style=wTeRich or wTeMultiLine or wTeCenter)
+    let smallFont = Font(12, weight=900, faceName="Tahoma")
+    frame.icon = Icon(slurpy)
+    SendMessage(hMain, wEvent_RegisterChildFrame, WPARAM frame.handle, 0)
+
+    with textctrl2:
+      writeText("\n")
+      setStyle(lineSpacing=1.5, indent=288)
+      writeImage(Image(slurpy2), 0.6)
+      writeText("\n")
+      setFormat(smallFont, fgColor=wBlack)
+      writeText(t1)
+      writeText("\n")
+      writeText(t2)
+      writeText("\n")
+      writeLink(t3, "Github page")
+      writeText("\n")
+
+
+    textctrl2.wEvent_TextLink do (event: wEvent):
+      if event.mouseEvent == wEvent_LeftUp:
+        let url = textctrl2.range(event.start..<event.end)
+        ShellExecute(0, "open", url, nil, nil, 5)
+#[ 
+    frame.wEvent_Ping do ():
+      echo threadId, " wEvent_Ping"
+      PostMessage(hMain, wEvent_Pong, WPARAM threadId, 0)
+ ]#
+    frame.wEvent_Destroy do ():
+      SendMessage(hMain, wEvent_UnregisterChildFrame, WPARAM frame.handle, 0)
+
+    frame.show()
+    app.mainLoop()
+    echo threadId, " thread closed"
+
+
+
+
+
+
+
+
+
 
 
 proc main(bootstarter : bool) =
@@ -1423,35 +1491,7 @@ proc main(bootstarter : bool) =
 
   # A E S T E T H I C
 
-  proc abouts() =
-    var t1 = fmt"{namedrop}{ver}"
-    var t2 = fmt"Author: {author}"
-    var t3 = github
-    let app2 = App()
-    let frame2 = Frame(title="About", size=(450, 600))
-    let textctrl2 = TextCtrl(frame2, style=wTeRich or wTeMultiLine or wTeCenter)
-    let smallFont = Font(12, weight=900, faceName="Tahoma")
-    frame2.icon = Icon(slurpy)
-    with textctrl2:
-      writeText("\n")
-      setStyle(lineSpacing=1.5, indent=288)
-      writeImage(Image(slurpy2), 0.6)
-      writeText("\n")
-      setFormat(smallFont, fgColor=wBlack)
-      writeText(t1)
-      writeText("\n")
-      writeText(t2)
-      writeText("\n")
-      writeLink(t3, "Github page")
-      writeText("\n")
 
-    textctrl2.wEvent_TextLink do (event: wEvent):
-      if event.mouseEvent == wEvent_LeftUp:
-        let url = textctrl2.range(event.start..<event.end)
-        ShellExecute(0, "open", url, nil, nil, 5)
-
-    frame2.center()
-    frame2.show()
 
 
   # A E S T E T H I C
@@ -2148,18 +2188,21 @@ proc main(bootstarter : bool) =
       inputSearch.setFocus()
     else:
       searchTerm = inputSearch.getValue()
-      wrapperSearchNodes()
-      if searchResultsId.len() > 0:
-        if modeStatus == addx:
-          openGUI()
-          activateSearch()
-        elif modeStatus == search:
-          reloadSearch()
+      if searchTerm.len > 2:
+        wrapperSearchNodes()
+        if searchResultsId.len() > 0:
+          if modeStatus == addx:
+            openGUI()
+            activateSearch()
+          elif modeStatus == search:
+            reloadSearch()
+        else:
+          status.setStatusText("Found no results :(")
+          if currentChildren.len == 0:
+            currentNode.reset()
+            currentParentId.reset()
       else:
-        status.setStatusText("Found no results :(")
-        if currentChildren.len == 0:
-          currentNode.reset()
-          currentParentId.reset()
+        status.setStatusText("Please type at least 3 characters")
 
 
   inputList.wEvent_TextEnter do (event: wEvent):
@@ -2617,12 +2660,26 @@ proc main(bootstarter : bool) =
       saveAsHandler()
 
   frame.idAbout do ():
-    abouts()
+    spawn createChildThreadAbouts(frame.handle)
 
-  frame.idCheckUpdates do ():
-    check4updoots()
+  frame.wEvent_RegisterChildFrame do (event: wEvent):
+    childFrames.incl HWND event.wParam
+
+  frame.wEvent_UnregisterChildFrame do (event: wEvent):
+    childFrames.excl HWND event.wParam
+
+#[  
+  button2.wEvent_Button do ():
+    for hwnd in childFrames:
+      PostMessage(hwnd, wEvent_Ping, 0, 0)
 
 
+  frame.wEvent_Pong do (event: wEvent):
+    echo event.wParam, " wEvent_Pong"
+    frame.idCheckUpdates do ():
+      check4updoots()
+
+]#
 
   initFonts()
   initColors()
@@ -2642,5 +2699,7 @@ proc main(bootstarter : bool) =
   frame.center()
   frame.show()
   app.mainLoop()
+
+
 
 main(true)
