@@ -1,4 +1,4 @@
-import wNim / [wApp,wFontDialog, wImage, wDirDialog, wColorDialog ,wFileDialog, wFont, wCheckBox, wFrame, wPanel, wButton, wTextCtrl, wUtils, wListCtrl, wStaticBox, wMessageDialog, wStatusBar, wIcon, wBitmap, wMenuBar, wMenu, wMenuBarCtrl,wDataObject,wListBox,wStaticText]
+import wNim / [wApp,wStaticBitmap,wStaticText, wFontDialog, wImage, wDirDialog, wColorDialog ,wFileDialog, wFont, wCheckBox, wFrame, wPanel, wButton, wTextCtrl, wUtils, wListCtrl, wStaticBox, wMessageDialog, wStatusBar, wIcon, wBitmap, wMenuBar, wMenu, wMenuBarCtrl,wDataObject,wListBox,wStaticText]
 import std / [threadpool,sets, strformat, strutils, tables, algorithm, os, times, unicode, sequtils, with, options,enumerate]
 import winim/winstr, winim/inc/shellapi, winim/lean
 
@@ -24,7 +24,7 @@ var archiveName : string
 let ver = fmt" - {ver4updoot} "
 var bookmarkingSeq : seq[string]
 const slurpy=staticRead("gyoza/Untitled3.ico")
-const slurpy2=staticRead("gyoza/Untitled5.png")
+const slurpy2=staticRead("gyoza/Untitled560.png")
 
 
 const
@@ -46,26 +46,54 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
     var t3 = github
 
     let threadId = GetCurrentThreadId()
-
+    echo childFrames
 
     var app = App()
-    var frame = Frame(title="About", size=(450, 600))
-    let textctrl2 = TextCtrl(frame, style=wTeRich or wTeMultiLine or wTeCenter)
+    var frame = Frame(title="About", size=(340, 520))
+    let panel = Panel(frame)
     let smallFont = Font(12, weight=900, faceName="Tahoma")
     frame.icon = Icon(slurpy)
     SendMessage(hMain, wEvent_RegisterChildFrame, WPARAM frame.handle, 0)
+    panel.backgroundColor = 16777215
+
+    let dataBitmap = StaticBitmap(panel, bitmap=Bitmap(slurpy2))
+    dataBitmap.show
+    echo dataBitmap.getBestSize
+    #echo dataBitmap.getDefaultSize
+    let textctrl2 = TextCtrl(panel, style=wTeRich or wTeMultiLine or wTeCenter or wTeReadOnly)
+
+
+    proc layout() =
+      panel.layout:
+          textctrl2:
+              top = panel.top
+              left = panel.left
+              bottom = dataBitmap.top
+              right = panel.right
+          dataBitmap:
+              left = panel.left
+              bottom = panel.bottom
+              height = 240
+
 
     with textctrl2:
       writeText("\n")
-      setStyle(lineSpacing=1.5, indent=288)
-      writeImage(Image(slurpy2), 0.6)
       writeText("\n")
-      setFormat(smallFont, fgColor=wBlack)
+      writeText("\n")
+      writeText("\n")
+      writeText("\n")
+      writeText("\n")
+      setStyle(lineSpacing=1.5, indent=288)
+      writeText("\n")
       writeText(t1)
+      setFormat(smallFont, fgColor=wMediumAquamarine)
       writeText("\n")
       writeText(t2)
+      setFormat(smallFont, fgColor=wBlack)
       writeText("\n")
       writeLink(t3, "Github page")
+      writeText("\n")
+      setStyle(align = wTextAlignLeft, lineSpacing=1.5, indent=288)
       writeText("\n")
 
 
@@ -73,6 +101,9 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
       if event.mouseEvent == wEvent_LeftUp:
         let url = textctrl2.range(event.start..<event.end)
         ShellExecute(0, "open", url, nil, nil, 5)
+
+
+
 #[ 
     frame.wEvent_Ping do ():
       echo threadId, " wEvent_Ping"
@@ -81,9 +112,16 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
     frame.wEvent_Destroy do ():
       SendMessage(hMain, wEvent_UnregisterChildFrame, WPARAM frame.handle, 0)
 
+
+    panel.wEvent_Size do ():
+      layout()
+
+    layout()
+
     frame.show()
     app.mainLoop()
     echo threadId, " thread closed"
+    echo childFrames
 
 
 
