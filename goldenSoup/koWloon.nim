@@ -93,7 +93,7 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
       setFormat(smallFont, fgColor=wMediumAquamarine)
       writeText("\n")
       writeText(t2)
-      setFormat(smallFont, fgColor=wBlack)
+      setFormat(smallFont, fgColor=wBlue)
       writeText("\n")
       writeLink(t3, "Github page")
       writeText("\n")
@@ -181,8 +181,7 @@ proc createChildThreadUpdate(hMain: HWND) {.thread.} =
               right = sub1.right
 
 
-    var check = some(true)
-
+    var check = isUpdated()
 
     textctrl2.writeText("\n")
     textctrl2.writeText("\n")
@@ -355,6 +354,7 @@ proc main(bootstarter : bool) =
       idAddView
       idCheckUpdates
       idToggleArchive
+      idMail
 
 
   let menuBar = MenuBar(frame)
@@ -382,6 +382,8 @@ proc main(bootstarter : bool) =
   menuEdit.append(idNotesToSubNodes, "&Notes to Sub-Nodes", "Send all the current Notes, line by line, as SubNode to pre-existing Nodes")
   menuEdit.append(idNotesToSubNodesPivot, "&Notes to Sub-Nodes [Pivot]", "Send all the current Notes, line by line, as Pivot SubNode to pre-existing Nodes")
   menuEdit.append(idNotesToNotes, "&Notes to line-by-line Notes", "Send all the current Notes, line by line, as Note to pre-existing Nodes")
+  menuEdit.appendSeparator()
+  menuEdit.append(idMail, "&Mail Note", "Opens the default email program and drafts an email with the note contents")
   let menuNode = Menu(menuBar, "&Nodes")
   menuNode.append(idRefresh, "&RefreshNode\tF5", "Refresh a node")
   menuNode.appendSeparator()
@@ -2760,6 +2762,13 @@ proc main(bootstarter : bool) =
     if currentNode.len > 0:
       toggleStarkGUI(currentNode)
       dataList.setSelection(find(currentChildren,tablex[currentNode].id))
+
+
+
+
+  frame.idMail do ():
+    if currentNode.len > 0:
+      ShellExecute(0, "open", fmt"mailto:empty@empty.com?subject={tablex[currentNode].title}&body={tablex[currentNode].data}", nil, nil, 5)
 
 
   frame.idArchiveElement do ():
