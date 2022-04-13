@@ -2,8 +2,8 @@
 
 # koWloon (generic) notes
 
-Kgn is an app with notes inside notes all the way down to more notes. <br />
-It's really all there is to it 📝
+Kgn is an app with notes inside notes all the way down to more notes 📝 <br />
+First time users might want to read the [Tutorial](https://github.com/endriVV/koWloon-generic-notes/wiki/Basic-Tutorial).
 
 # Notice:
 
