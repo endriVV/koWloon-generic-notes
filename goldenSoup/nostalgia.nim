@@ -130,6 +130,7 @@ prefstitles.add("Salmon Color Theme")
 prefstitles.add("Teal Color Theme")
 prefstitles.add("Savana Color Theme")
 prefstitles.add("Metal Color Theme")
+prefstitles.add("Cherry Blossom Color Theme")
 prefstitles.add("Default Theme")
 
 
@@ -154,6 +155,7 @@ prefnotes.add("Sets the Color Scheme of the app to Salmon")
 prefnotes.add("Sets the Color Scheme of the app to Teal")
 prefnotes.add("Sets the Color Scheme of the app to Savana")
 prefnotes.add("Sets the Color Scheme of the app to Metal")
+prefnotes.add("Sets the Color Scheme of the app to Cherry Blossom")
 prefnotes.add("Resets the Color Scheme to Default")
 
 
@@ -175,6 +177,7 @@ prefhelper.add("appliqueNotesColor")
 prefhelper.add("appliqueNodesColor")
 prefhelper.add("appliqueFindColor")
 prefhelper.add("appliqueAddNodeColor")
+prefhelper.add("..")
 prefhelper.add("..")
 prefhelper.add("..")
 prefhelper.add("..")

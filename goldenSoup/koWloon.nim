@@ -1772,7 +1772,19 @@ proc main(bootstarter : bool) =
           except:
             discard
 
+
         if dataList.getSelection() == 21 :
+          try:
+            tablex[currentNode].data = "Cherry Blossom Theme Set"
+            refreshNode()
+            cherryBlossomTheme()
+            initColors()
+          except:
+            discard
+
+
+
+        if dataList.getSelection() == 22 :
           try:
             tablex[currentNode].data = "Default Theme (White) Set"
             refreshNode()

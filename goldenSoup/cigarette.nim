@@ -376,7 +376,19 @@ proc metalTheme*() =
   prefs["findFontColor"] = 0
   prefs["addNodeFontColor"] = 0
 
-
+proc cherryBlossomTheme*() = #in honor of alphatester demotomohiro
+  prefs["notesBgColor"] = 15986943
+  prefs["nodesBgColor"] = 14011647
+  prefs["findBgColor"] = 15986943
+  prefs["addNodeBgColor"] = 14011647
+  prefs["appliqueNotesColor"] = 11711078
+  prefs["appliqueNodesColor"] = 11711078
+  prefs["appliqueFindColor"] = 11711078
+  prefs["appliqueAddNodeColor"] = 11711078
+  prefs["notesFontColor"] = 0
+  prefs["nodesFontColor"] = 0
+  prefs["findFontColor"] = 0
+  prefs["addNodeFontColor"] = 0
 
 
 # A E S T E T H I C
