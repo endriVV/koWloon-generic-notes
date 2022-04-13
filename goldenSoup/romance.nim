@@ -61,7 +61,7 @@ proc orderAZ*(temp : seq[string]):seq[string] = #change
 
 
 proc orderLE*(temp : seq[string]):seq[string] =
-  var temp : seq[string]
+  var temp = temp
   var tupler2 : seq[tuple[hello,world :string]]
   var temp2 : seq[string]
   for i in temp:
