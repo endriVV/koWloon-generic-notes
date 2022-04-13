@@ -76,7 +76,7 @@ The following functions can be useful to create nodes quickly from a tabular dat
 - [Notes to Nodes] Will import each line of a note in a new node. """ & "\r\n" & """
 - [Notes to Sub-Nodes], [Notes to Sub-Nodes Pivot] and [Notes to line-by-line Notes] are will populate existing nodes with data line by line. """ & "\r\n" & """
 (Pivot is used adding text in the [Add Node Field]) """ & "\r\n" & """
-- [Mail Note] - Opens default mail client to compose a mail with title and body from the current Note
+- [Mail Note], [Mail Context]- Open default mail client to compose a mail with title and body from the current Note or Context
 """)
 
 
