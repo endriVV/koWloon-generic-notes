@@ -478,6 +478,7 @@ proc main(bootstarter : bool) =
   inputList.setFont(defaultFont2)
   dataBox.setMargin(5) #hmmmmm 
   nodeCheck.setValue(true)
+  dataBox.setStyle(align = wTextAlignJustify)
 
 
 
