@@ -320,7 +320,7 @@ proc main(bootstarter : bool) =
       idCheckUpdates
       idToggleArchive
       idMail
-
+      idMailContext
 
   let menuBar = MenuBar(frame)
   let menuFile = Menu(menuBar, "&File")
@@ -349,6 +349,7 @@ proc main(bootstarter : bool) =
   menuEdit.append(idNotesToNotes, "&Notes to line-by-line Notes", "Send all the current Notes, line by line, as Note to pre-existing Nodes")
   menuEdit.appendSeparator()
   menuEdit.append(idMail, "&Mail Note", "Opens the default email program and drafts an email with the note contents")
+  menuEdit.append(idMailContext, "&Mail Context", "Like Mail Note but for the current context")
   let menuNode = Menu(menuBar, "&Nodes")
   menuNode.append(idRefresh, "&RefreshNode\tF5", "Refresh a node")
   menuNode.appendSeparator()
@@ -392,7 +393,6 @@ proc main(bootstarter : bool) =
   menuHelp.appendSeparator()
   menuHelp.append(idAbout, "About", "Info") 
 
-     
   let menuContext = Menu()
   menuContext.append(idToggleStarks,"&Add / Remove Bookmark","Toggled the favorite status of the current node")
   menuContext.appendSeparator()
@@ -2740,7 +2740,14 @@ proc main(bootstarter : bool) =
 
   frame.idMail do ():
     if currentNode.len > 0:
-      ShellExecute(0, "open", fmt"mailto:empty@empty.com?subject={tablex[currentNode].title}&body={tablex[currentNode].data}", nil, nil, 5)
+      var temp = tablex[currentNode].data.replace("\n", "%0d%0a")
+      ShellExecute(0, "open", fmt"mailto:empty@empty.com?subject={tablex[currentNode].title}&body={temp}", nil, nil, 5)
+
+
+  frame.idMailContext do ():
+    if currentChildren.len > 0:
+      var temp = mailtoContext(currentChildren)
+      ShellExecute(0, "open", fmt"mailto:empty@empty.com?subject={tablex[currentParentId].title}&body={temp}", nil, nil, 5)
 
 
   frame.idArchiveElement do ():

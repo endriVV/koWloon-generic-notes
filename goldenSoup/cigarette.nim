@@ -242,6 +242,16 @@ proc exportContext*(titleCTX: string, container: seq[string]):bool =
 
 
 
+proc mailtoContext*(container: seq[string]):string =
+  var title : string
+  var data : string
+  for i in container:
+    data.add("\n[ " & tablex[i].title & " ]\n")
+    data.add(tablex[i].data & "\n")
+  return data[1 .. ^1].replace("\n", "%0d%0a")
+
+
+
 
 proc exportGlobal*(id : string):bool=
   var title : string
