@@ -2306,12 +2306,12 @@ proc main(bootstarter : bool) =
 
 
   inputSearch.wEvent_TextEnter do (event: wEvent):
-    if inputSearch.getValue() == searchTerm and searchTerm.len > 2:
+    if inputSearch.getValue() == searchTerm and searchTerm.len > 0:
       findNextGUI()
       inputSearch.setFocus()
     else:
       searchTerm = inputSearch.getValue()
-      if searchTerm.len > 2 and tablex[currentRootId].children.len > 0:
+      if searchTerm.len > 0 and tablex[currentRootId].children.len > 0:
         wrapperSearchNodes()
         if searchResultsId.len() > 0:
           if modeStatus == addx:
@@ -2325,18 +2325,18 @@ proc main(bootstarter : bool) =
             currentNode.reset()
             currentParentId.reset()
       else:
-        status.setStatusText("Please have at least one node to search, and type at least three characters")
+        status.setStatusText("Please have at least one node to search, and search at least one character")
 
 
 
   searchButton.connect(wEvent_Button) do (event: wEvent):
-    if inputSearch.getValue() == searchTerm and searchTerm.len > 2:
+    if inputSearch.getValue() == searchTerm and searchTerm.len > 0:
       findNextGUI()
       inputSearch.setFocus()
     else:
       searchTerm = inputSearch.getValue()
       wrapperSearchNodes()
-      if searchTerm.len > 2 and tablex[currentRootId].children.len > 0:
+      if searchTerm.len > 0 and tablex[currentRootId].children.len > 0:
         if searchResultsId.len() > 0:
           if modeStatus == addx:
             openGUI()
@@ -2349,12 +2349,7 @@ proc main(bootstarter : bool) =
             currentNode.reset()
             currentParentId.reset()
       else:
-        status.setStatusText("Please have at least one node to search, and type at least three characters")
-
-
-
-
-
+        status.setStatusText("Please have at least one node to search, and search at least one character")
 
 
 
