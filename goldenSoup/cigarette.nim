@@ -12,7 +12,7 @@ import glasses
 var dt : Datetime
 var failedToLoad* : bool
 
-var ver4updoot* = "v0.4.2"
+var ver4updoot* = "v0.4.3"
 
 type updoots = object
   tag_name: string
