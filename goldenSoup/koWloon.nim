@@ -2413,21 +2413,21 @@ proc main(bootstarter : bool) =
 
 
   searchButton.wEvent_MouseEnter do (event: wEvent):
-    status.setStatusText("Search")
+    status.setStatusText("Find")
 
   searchButton.wEvent_MouseLeave do (event: wEvent):
     status.setStatusText("")
 
 
   nodeCheck.wEvent_MouseEnter do (event: wEvent):
-    status.setStatusText("Restricts search to Node only")
+    status.setStatusText("Find Nodes titles")
 
   nodeCheck.wEvent_MouseLeave do (event: wEvent):
     status.setStatusText("")
 
 
   noteCheck.wEvent_MouseEnter do (event: wEvent):
-    status.setStatusText("Restricts search to Note only")
+    status.setStatusText("Find Notes contents")
 
   noteCheck.wEvent_MouseLeave do (event: wEvent):
     status.setStatusText("")
@@ -2435,14 +2435,14 @@ proc main(bootstarter : bool) =
 
 
   ctxCheck.wEvent_MouseEnter do (event: wEvent):
-    status.setStatusText("Restricts search to current Node and its subnodes")
+    status.setStatusText("Find starting from current Node")
 
   ctxCheck.wEvent_MouseLeave do (event: wEvent):
     status.setStatusText("")
 
 
   keepCheck.wEvent_MouseEnter do (event: wEvent):
-    status.setStatusText("Stacks new Searches on top of results of old ones")
+    status.setStatusText("Stack consecutive searches as results")
 
   keepCheck.wEvent_MouseLeave do (event: wEvent):
     status.setStatusText("")
