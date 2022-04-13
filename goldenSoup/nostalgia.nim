@@ -74,8 +74,9 @@ docxnotes.add("""
 The following functions can be useful to create nodes quickly from a tabular data source like Excel: """ & "\r\n" & """
 """ & "\r\n" & """
 - [Notes to Nodes] Will import each line of a note in a new node. """ & "\r\n" & """
-- [Notes to Sub-Nodes], [Notes to Sub-Nodes Pivot] and [Notes to line-by-line Notes] are will populate existing nodes with data line by line.
-P.S. (Pivot is used adding text in the [Add Node Field])
+- [Notes to Sub-Nodes], [Notes to Sub-Nodes Pivot] and [Notes to line-by-line Notes] are will populate existing nodes with data line by line. """ & "\r\n" & """
+(Pivot is used adding text in the [Add Node Field]) """ & "\r\n" & """
+- [Mail Note] - Opens default mail client to compose a mail with title and body from the current Note
 """)
 
 
@@ -85,7 +86,7 @@ docxnotes.add("""
 - [Node(s) to Clipboard] Will copy to clipboard the name of the current Node(s).""" & "\r\n" & """
 - [Order Nodes A-Z] Will order the current Nodes from A to Z. """ & "\r\n" & """
 - [Order Nodes Last-Edit] Will order the current Nodes in order of last editing.""" & "\r\n" & """
-- [Add View] Will open a new window with view on the same .kgn data.
+- [Add View] Will open a new window with view on the same .kgn data.""" & "\r\n" & """
 - [Backup] Will make a copy in your [Export Path] of the data archive in .kgn format and exported plain text.
 """)
 
