@@ -2,3 +2,5 @@
 *.niprefs
 *.kgn
 *.zip
+
+*threading.nim
