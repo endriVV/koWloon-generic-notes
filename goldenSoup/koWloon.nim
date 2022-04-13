@@ -2538,6 +2538,8 @@ proc main(bootstarter : bool) =
           frame.popupMenu(menuContext)
         else:
           frame.popupMenu(pasteContext)
+    else:
+      frame.popupMenu(pasteContext)
 
 
   frame.idModify do ():
