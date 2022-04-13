@@ -1,4 +1,4 @@
-import wNim / [wApp,wStaticBitmap,wStaticText, wFontDialog, wImage, wDirDialog, wColorDialog ,wFileDialog, wFont, wCheckBox, wFrame, wPanel, wButton, wTextCtrl, wUtils, wListCtrl, wStaticBox, wMessageDialog, wStatusBar, wIcon, wBitmap, wMenuBar, wMenu, wMenuBarCtrl,wDataObject,wListBox,wStaticText]
+import wNim / [wApp,wPaintDC, wFontDialog, wImage, wDirDialog, wColorDialog ,wFileDialog, wFont, wCheckBox, wFrame, wPanel, wButton, wTextCtrl, wUtils, wListCtrl, wStaticBox, wMessageDialog, wStatusBar, wIcon, wBitmap, wMenuBar, wMenu, wMenuBarCtrl,wDataObject,wListBox,wStaticText]
 import std / [threadpool,sets, strformat, strutils, tables, algorithm, os, times, unicode, sequtils, with, options,enumerate]
 import winim/winstr, winim/inc/shellapi, winim/lean
 
@@ -50,31 +50,33 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
 
     var app = App()
     var frame = Frame(title="About", size=(340, 520))
-    let panel = Panel(frame)
+    let sub1 = Panel(frame)
+    let sub2 = Panel(frame)
     let smallFont = Font(12, weight=900, faceName="Tahoma")
     frame.icon = Icon(slurpy)
     SendMessage(hMain, wEvent_RegisterChildFrame, WPARAM frame.handle, 0)
-    panel.backgroundColor = 16777215
-
-    let dataBitmap = StaticBitmap(panel, bitmap=Bitmap(slurpy2))
-    dataBitmap.show
-    echo dataBitmap.getBestSize
-    #echo dataBitmap.getDefaultSize
-    let textctrl2 = TextCtrl(panel, style=wTeRich or wTeMultiLine or wTeCenter or wTeReadOnly)
-
+    sub1.backgroundColor = 16777215
+    sub2.backgroundColor = 16777215
+    let dataBitmap = Bitmap(slurpy2)
+    let textctrl2 = TextCtrl(sub1, style=wTeRich or wTeMultiLine or wTeCenter or wTeReadOnly)
 
     proc layout() =
-      panel.layout:
+      frame.layout:
+          sub1:
+              top = frame.top
+              left = frame.left
+              bottom = sub2.top
+              right = frame.right
+          sub2:
+              left = frame.left
+              bottom = frame.bottom
+              height = frame.height / 2
+      sub1.layout:
           textctrl2:
-              top = panel.top
-              left = panel.left
-              bottom = dataBitmap.top
-              right = panel.right
-          dataBitmap:
-              left = panel.left
-              bottom = panel.bottom
-              height = 240
-
+              top = sub1.top
+              left = sub1.left
+              bottom = sub1.bottom
+              right = sub1.right
 
     with textctrl2:
       writeText("\n")
@@ -83,8 +85,10 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
       writeText("\n")
       writeText("\n")
       writeText("\n")
+      writeText("\n")
       setStyle(lineSpacing=1.5, indent=288)
       writeText("\n")
+      setFormat(smallFont, fgColor=wBlack)
       writeText(t1)
       setFormat(smallFont, fgColor=wMediumAquamarine)
       writeText("\n")
@@ -93,14 +97,23 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
       writeText("\n")
       writeLink(t3, "Github page")
       writeText("\n")
-      setStyle(align = wTextAlignLeft, lineSpacing=1.5, indent=288)
-      writeText("\n")
+
 
 
     textctrl2.wEvent_TextLink do (event: wEvent):
       if event.mouseEvent == wEvent_LeftUp:
         let url = textctrl2.range(event.start..<event.end)
         ShellExecute(0, "open", url, nil, nil, 5)
+
+
+
+    sub2.wEvent_Paint do ():
+      var
+        dc = PaintDC(sub2)
+
+      dc.backgroundTransparent = true
+      dc.drawBitmap(dataBitmap)
+
 
 
 
@@ -113,7 +126,7 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
       SendMessage(hMain, wEvent_UnregisterChildFrame, WPARAM frame.handle, 0)
 
 
-    panel.wEvent_Size do ():
+    frame.wEvent_Size do ():
       layout()
 
     layout()
@@ -121,7 +134,9 @@ proc createChildThreadAbouts(hMain: HWND) {.thread.} =
     frame.show()
     app.mainLoop()
     echo threadId, " thread closed"
-    echo childFrames
+
+
+
 
 
 
@@ -134,52 +149,110 @@ proc createChildThreadUpdate(hMain: HWND) {.thread.} =
 
     let threadId = GetCurrentThreadId()
 
-
     var app = App()
-    var frame = Frame(title="About", size=(450, 600))
-    let textctrl2 = TextCtrl(frame, style=wTeRich or wTeMultiLine or wTeCenter)
+    var frame = Frame(title="Check for Updates..", size=(340, 520))
+    let sub1 = Panel(frame)
+    let sub2 = Panel(frame)
     let smallFont = Font(12, weight=900, faceName="Tahoma")
     frame.icon = Icon(slurpy)
+    sub1.backgroundColor = 16777215
+    sub2.backgroundColor = 16777215
+    let dataBitmap = Bitmap(slurpy2)
+    let textctrl2 = TextCtrl(sub1, style=wTeRich or wTeMultiLine or wTeCenter or wTeReadOnly)
     SendMessage(hMain, wEvent_RegisterChildFrame, WPARAM frame.handle, 0)
 
-    var check = isUpdated()
+
+    proc layout() =
+      frame.layout:
+          sub1:
+              top = frame.top
+              left = frame.left
+              bottom = sub2.top
+              right = frame.right
+          sub2:
+              left = frame.left
+              bottom = frame.bottom
+              height = frame.height / 2
+      sub1.layout:
+          textctrl2:
+              top = sub1.top
+              left = sub1.left
+              bottom = sub1.bottom
+              right = sub1.right
+
+
+    var check = some(true)
+
+
+    textctrl2.writeText("\n")
+    textctrl2.writeText("\n")
+    textctrl2.writeText("\n")
+    textctrl2.writeText("\n")
+    textctrl2.writeText("\n")
+    textctrl2.setStyle(lineSpacing=1.5, indent=288)
+    textctrl2.setFormat(smallFont, fgColor=wBlack)
+    textctrl2.writeText(t1)
+    textctrl2.writeText("\n")
 
     if check == some(false):
-        t2 = "New updates are available for Kgn! Visit the homepage to download them."
-    if check == some(true):
-        t2 = "Kgn is updated to the latest version. Happy day."
-    if check == none(bool):
-        t2 = "Couldn't connect to the server"
+        t2 = "New updates are available!"
+        textctrl2.setFormat(smallFont, fgColor=wRed)
+        textctrl2.writeText(t2)
+        textctrl2.setFormat(smallFont, fgColor=wBlack)
+        textctrl2.writeText("\n")
+        textctrl2.writeText("Visit the homepage to download them")
 
-    with textctrl2:
-      writeText("\n")
-      setStyle(lineSpacing=1.5, indent=288)
-      writeImage(Image(slurpy2), 0.6)
-      writeText("\n")
-      writeText(t1)
-      setFormat(smallFont, fgColor=wGreen)
-      writeText("\n")
-      writeText(t2)
-      setFormat(smallFont, fgColor=wBlack)
-      writeText("\n")
-      writeLink(t3, "Github page")
-      writeText("\n")
+    if check == some(true):
+        t2 = "The program is updated to the latest version. Happy day ٩(◕‿◕｡)۶"
+        textctrl2.setFormat(smallFont, fgColor=wMediumAquamarine)
+        textctrl2.writeText(t2)
+    if check == none(bool):
+        t2 = "Couldn't connect to the server ( •_•)"
+        textctrl2.setFormat(smallFont, fgColor=wRed)
+        textctrl2.writeText(t2)
+
+    textctrl2.setFormat(smallFont, fgColor=wBlue)
+    textctrl2.writeText("\n")
+    textctrl2.writeLink(t3, "Github page")
+    textctrl2.writeText("\n")
+
+
 
     textctrl2.wEvent_TextLink do (event: wEvent):
       if event.mouseEvent == wEvent_LeftUp:
         let url = textctrl2.range(event.start..<event.end)
         ShellExecute(0, "open", url, nil, nil, 5)
+
+
+    sub2.wEvent_Paint do ():
+      var
+        dc = PaintDC(sub2)
+
+      dc.backgroundTransparent = true
+      dc.drawBitmap(dataBitmap)
+
+
   #[ 
     frame.wEvent_Ping do ():
       echo threadId, " wEvent_Ping"
       PostMessage(hMain, wEvent_Pong, WPARAM threadId, 0)
   ]#
+
+
     frame.wEvent_Destroy do ():
       SendMessage(hMain, wEvent_UnregisterChildFrame, WPARAM frame.handle, 0)
+
+    frame.wEvent_Size do ():
+      layout()
+
+    layout()
+
 
     frame.show()
     app.mainLoop()
     echo threadId, " thread closed"
+
+
 
 
 

@@ -254,11 +254,8 @@ proc exportGlobal*(id : string):bool=
 
 
 proc exportGlobal1to1beta*(id : string): bool=
-  var title : string
-  var data : string
   nowMaker()
   var collisionCheckSet : Hashset[string]
-  var discarded : string
   var burger = globalWalk1to1(id)
   for (ids, title, data) in burger:
     var xtitle = title
