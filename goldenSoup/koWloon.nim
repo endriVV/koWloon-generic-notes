@@ -806,6 +806,18 @@ proc main(bootstarter : bool) =
         let now1 = now()
         tablex[currentNode].ledit = now1.format("yyyy-MM-dd-HH-mm-ss")
         setUnsaved(true)
+    else:
+      if dataBox.getValue() != "":
+        addchild(currentParentId,"New Node :)")
+        currentNode = tablex[currentParentId].children[^1]
+        tablex[currentNode].data = dataBox.getValue()
+        let now1 = now()
+        tablex[currentNode].ledit = now1.format("yyyy-MM-dd-HH-mm-ss")
+        currentChildren = tablex[currentParentId].children
+        displayChildrenTitles()
+        setUnsaved(true)
+
+
     
    
 
@@ -2258,9 +2270,8 @@ proc main(bootstarter : bool) =
 
 
   dataBox.wEvent_Text do (event: wEvent):
-    if currentChildren.len() > 0:
-      frame.startTimer(0.75) #fast enough?
-      bling()
+    frame.startTimer(0.75) #fast enough?
+    bling()
 
   frame.wEvent_Timer do (event: wEvent):
     updateDataBox()
