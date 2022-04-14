@@ -1,8 +1,11 @@
-import std / [tables]
+import std / [tables, random]
 
 import watermelon
 import cigarette
 
+
+randomize()
+let numz* = rand(6)
 
 
 proc starkSeqCheck*() =
@@ -21,7 +24,8 @@ proc starkSeqCheckArchive*() =
 
 
 
-
-
 proc checkSpecialDelete*() =
   starkSeqCheck()
+
+
+

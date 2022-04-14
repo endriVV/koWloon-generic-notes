@@ -1648,6 +1648,35 @@ proc main(bootstarter : bool) =
 
   # A E S T E T H I C
 
+
+
+  proc randomTheme()=
+    prefs["randomTheme"] = true
+    case numz
+    of 0:
+        salmonTheme()
+    of 1:
+        tealTheme()
+    of 2:
+        savanaTheme()
+    of 3:
+        metalTheme()
+    of 4:
+        cherryBlossomTheme()
+    of 5:
+        coalTheme() 
+    of 6:
+        dolphinTheme() 
+    else:
+      prefs["randomTheme"] = false
+
+
+
+
+
+
+  # A E S T E T H I C
+
   proc initNinjaRootGUI() =
     if modeStatus == docx:
       initNinjaRoot(doctitles, docxnotes)
@@ -1733,6 +1762,7 @@ proc main(bootstarter : bool) =
             refreshNode()
             prefs[prefhelper[dataList.getSelection()]] = colorsnz
             initColors()
+            prefs["randomTheme"] = false
           except:
             discard
 
@@ -1742,6 +1772,7 @@ proc main(bootstarter : bool) =
             refreshNode()
             salmonTheme()
             initColors()
+            prefs["randomTheme"] = false
           except:
             discard
    
@@ -1751,6 +1782,7 @@ proc main(bootstarter : bool) =
             refreshNode()
             tealTheme()
             initColors()
+            prefs["randomTheme"] = false
           except:
             discard
 
@@ -1760,6 +1792,7 @@ proc main(bootstarter : bool) =
             refreshNode()
             savanaTheme()
             initColors()
+            prefs["randomTheme"] = false
           except:
             discard
 
@@ -1769,6 +1802,7 @@ proc main(bootstarter : bool) =
             refreshNode()
             metalTheme()
             initColors()
+            prefs["randomTheme"] = false
           except:
             discard
 
@@ -1779,17 +1813,51 @@ proc main(bootstarter : bool) =
             refreshNode()
             cherryBlossomTheme()
             initColors()
+            prefs["randomTheme"] = false
+          except:
+            discard
+
+
+        if dataList.getSelection() == 22 :
+          try:
+            tablex[currentNode].data = "Coal Theme Set"
+            refreshNode()
+            coalTheme()
+            initColors()
+            prefs["randomTheme"] = false
+          except:
+            discard
+
+
+        if dataList.getSelection() == 23 :
+          try:
+            tablex[currentNode].data = "Dolphin Theme Set"
+            refreshNode()
+            dolphinTheme()
+            initColors()
+            prefs["randomTheme"] = false
           except:
             discard
 
 
 
-        if dataList.getSelection() == 22 :
+        if dataList.getSelection() == 24 :
+          try:
+            tablex[currentNode].data = "Selects a theme randomly every start"
+            refreshNode()
+            randomTheme()
+            initColors()
+          except:
+            discard
+
+
+        if dataList.getSelection() == 25 :
           try:
             tablex[currentNode].data = "Default Theme (White) Set"
             refreshNode()
             defaultTheme()
             initColors()
+            prefs["randomTheme"] = false
           except:
             discard
 
@@ -2808,7 +2876,8 @@ proc main(bootstarter : bool) =
     createChildThreadUpdate()
 
 
-
+  if getbool(prefs["randomTheme"]) == true:
+    randomTheme()
   initFonts()
   initColors()
   if bootstarter == true:

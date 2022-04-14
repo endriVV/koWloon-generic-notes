@@ -55,6 +55,7 @@ var prefs* = toPrefs({
   appliqueNodesColor: -1,
   appliqueFindColor: -1,
   appliqueAddNodeColor: -1,
+  randomTheme: false,
 }).initPrefs(path = "koWloon.niprefs")
 
 
@@ -385,6 +386,34 @@ proc cherryBlossomTheme*() = #in honor of alphatester demotomohiro
   prefs["appliqueNodesColor"] = 11711078
   prefs["appliqueFindColor"] = 11711078
   prefs["appliqueAddNodeColor"] = 11711078
+  prefs["notesFontColor"] = 0
+  prefs["nodesFontColor"] = 0
+  prefs["findFontColor"] = 0
+  prefs["addNodeFontColor"] = 0
+
+proc coalTheme*() = 
+  prefs["notesBgColor"] = 9997466
+  prefs["nodesBgColor"] = 9932698
+  prefs["findBgColor"] = 9997466
+  prefs["addNodeBgColor"] = 9932698
+  prefs["appliqueNotesColor"] = 9997466
+  prefs["appliqueNodesColor"] = 9932698
+  prefs["appliqueFindColor"] = 9997466
+  prefs["appliqueAddNodeColor"] = 9932698
+  prefs["notesFontColor"] = 0
+  prefs["nodesFontColor"] = 0
+  prefs["findFontColor"] = 0
+  prefs["addNodeFontColor"] = 0
+
+proc dolphinTheme*() = 
+  prefs["notesBgColor"] = 16506555
+  prefs["nodesBgColor"] = 16370320
+  prefs["findBgColor"] = 16506555
+  prefs["addNodeBgColor"] = 16370320
+  prefs["appliqueNotesColor"] = 16506555
+  prefs["appliqueNodesColor"] = 16370320
+  prefs["appliqueFindColor"] = 16506555
+  prefs["appliqueAddNodeColor"] = 16370320
   prefs["notesFontColor"] = 0
   prefs["nodesFontColor"] = 0
   prefs["findFontColor"] = 0
