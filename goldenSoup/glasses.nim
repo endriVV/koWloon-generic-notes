@@ -178,7 +178,6 @@ proc getHeadCount*(currentNode : string):int =
       for i in tablex[seq2check[k]].children:
         childnum = childnum + 1
         if tablex[i].children.len() > 0:
-          echo "kenzan" & i
           seq2check.add(i)
           k = k + 1
           nestingcounter = nestingcounter + 1
