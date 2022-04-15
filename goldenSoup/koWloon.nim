@@ -321,6 +321,7 @@ proc main(bootstarter : bool) =
       idToggleArchive
       idMail
       idMailContext
+      idGetInfo
 
   let menuBar = MenuBar(frame)
   let menuFile = Menu(menuBar, "&File")
@@ -411,6 +412,8 @@ proc main(bootstarter : bool) =
   menuContext.append(idPaste, "&Paste\tF8", "Paste")
   menuContext.appendSeparator()
   menuContext.append(idArchiveElement, "&Archive Element", "Deep Cuts the current node to the Archive")
+  menuContext.appendSeparator()
+  menuContext.append(idGetInfo, "&Get Info", "Displays information about the current node")
   let pasteContext = Menu()
   pasteContext.append(idPaste, "&Paste\tF8", "Paste")
 
@@ -2726,6 +2729,11 @@ proc main(bootstarter : bool) =
       removeSearchElement()
 
 
+  frame.idGetInfo do ():
+    if currentNode.len() > 0:
+      MessageDialog(frame, caption="Node Info", message="Number of subnodes: " & $getHeadcount(currentNode) & "\n\r" & "Last Edit time: " & getLE(currentNode)).display()
+
+
   frame.idClipboard do ():
     getSingleNodeAsBlob()
 
@@ -2798,6 +2806,7 @@ proc main(bootstarter : bool) =
       openGUI()
       addmode()
     testes()
+    echo $getHeadCount(currentNode)
 
 
   frame.wEvent_SetFocus do (event: wEvent):

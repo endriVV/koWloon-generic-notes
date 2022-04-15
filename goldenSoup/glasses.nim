@@ -161,3 +161,37 @@ proc toggleStark*(currentNode : string) =
       tablex[currentNode].s.excl(stark)
       starkSeq.delete(find(starkSeq,currentNode))
 
+
+
+# A E S T E T H I C
+
+proc getHeadCount*(currentNode : string):int =
+  if tablex[currentNode].children.len() == 0:
+    return 0
+  else:
+    var seq2check : seq[string]
+    seq2check.add(currentNode)
+    var k = 0
+    var childnum = 0
+    var nestingcounter = 1
+    while nestingcounter > 0:
+      for i in tablex[seq2check[k]].children:
+        childnum = childnum + 1
+        if tablex[i].children.len() > 0:
+          echo "kenzan" & i
+          seq2check.add(i)
+          k = k + 1
+          nestingcounter = nestingcounter + 1
+      nestingcounter = nestingcounter - 1
+    return childnum
+
+
+proc getLE*(currentNode : string): string =
+  let dt = parse(tablex[currentNode].ledit, "yyyy-MM-dd-HH-mm-ss")
+  return dt.format("dd/MM/yyyy") & " at: " & dt.format("HH:mm")
+
+
+
+
+
+
