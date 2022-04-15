@@ -1670,6 +1670,8 @@ proc main(bootstarter : bool) =
         coalTheme() 
     of 6:
         dolphinTheme() 
+    of 7:
+        draculaTheme() 
     else:
       prefs["randomTheme"] = false
 
@@ -1842,9 +1844,18 @@ proc main(bootstarter : bool) =
           except:
             discard
 
-
-
         if dataList.getSelection() == 24 :
+          try:
+            tablex[currentNode].data = "Dracula Theme Set"
+            refreshNode()
+            draculaTheme()
+            initColors()
+            prefs["randomTheme"] = false
+          except:
+            discard
+
+
+        if dataList.getSelection() == 25 :
           try:
             tablex[currentNode].data = "Selects a theme randomly every start"
             refreshNode()
@@ -1854,7 +1865,7 @@ proc main(bootstarter : bool) =
             discard
 
 
-        if dataList.getSelection() == 25 :
+        if dataList.getSelection() == 26 :
           try:
             tablex[currentNode].data = "Default Theme (White) Set"
             refreshNode()

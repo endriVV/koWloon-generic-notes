@@ -420,6 +420,20 @@ proc dolphinTheme*() =
   prefs["addNodeFontColor"] = 0
 
 
+proc draculaTheme*() = 
+  prefs["notesBgColor"] = 12632256
+  prefs["nodesBgColor"] = 16744597
+  prefs["findBgColor"] = 12632256
+  prefs["addNodeBgColor"] = 16744597
+  prefs["appliqueNotesColor"] = 128
+  prefs["appliqueNodesColor"] = 128
+  prefs["appliqueFindColor"] = 128
+  prefs["appliqueAddNodeColor"] = 128
+  prefs["notesFontColor"] = 0
+  prefs["nodesFontColor"] = 0
+  prefs["findFontColor"] = 0
+  prefs["addNodeFontColor"] = 0
+
 # A E S T E T H I C
 
 proc isUpdated*():Option[bool]=

@@ -5,7 +5,7 @@ import cigarette
 
 
 randomize()
-let numz* = rand(6)
+let numz* = rand(7)
 
 
 proc starkSeqCheck*() =
