@@ -171,10 +171,10 @@ proc getItOut(title: string, data : string):bool =
     return false
 
 
-proc getItOutPrint(data : string):string =
+proc getItOutPrint(cpid: string, data : string):string =
   if getString(prefs["exportPath"]).len > 0:
     try:
-      let (cfile, path) = createTempFile("tmpprefix_", "_end.txt")
+      let (cfile, path) = createTempFile(cpid & "_", "_end.txt")
       writeFile(path,data)
       return path
     except:
@@ -262,12 +262,22 @@ proc mailtoContext*(container: seq[string]):string =
   return data[1 .. ^1].replace("\n", "%0d%0a")
 
 
-proc printContext*(container: seq[string]):string =
+proc printSingleNote*(currentNode: string):string =
+  var title : string
+  if tablex[currentNode].title.len() > 0:
+    title = tablex[currentNode].title & ".txt"
+  else:  
+    title = "Note" & ".txt"
+  var data = tablex[currentNode].data
+  result = getItOutPrint(title, data)
+
+
+proc printContext*(cpid: string, container: seq[string]):string =
   var data : string
   for i in container:
     data.add("\n[ " & tablex[i].title & " ]\n")
     data.add(tablex[i].data & "\n")
-  result = getItOutPrint(data)
+  result = getItOutPrint(cpid, data)
 
 
 proc exportGlobal*(id : string):bool=

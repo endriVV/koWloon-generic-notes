@@ -258,6 +258,7 @@ proc main(bootstarter : bool) =
   var currentNode : string
 
 
+  var comboHasChanged = false
   var searchTitles : seq[string]
   var searchNotes : seq[string]
   var searchTerm : string
@@ -334,7 +335,9 @@ proc main(bootstarter : bool) =
   menuFile.appendSeparator()
   menuFile.append(idSave, "&Save\tCtrl+S", "Save")
   menuFile.append(idSaveAs, "&Save As ..", "Save as another .kgn archive")
-  menuFile.append(idPrintCTX, "&Print Current Notes", "Print current Note Context on the default windows printer")
+  menuFile.appendSeparator()
+  menuFile.append(idPrint, "&Print Note", "Print current Note on the default windows printer")
+  menuFile.append(idPrintCTX, "&Print Current Notes", "Print current Notes Context on the default windows printer")
   menuFile.appendSeparator()
   menuFile.append(idAddView, "&Add View", "Opens a new Window to edit the same Notes")
   menuFile.appendSeparator()
@@ -1338,9 +1341,9 @@ proc main(bootstarter : bool) =
       if tablex[currentParentId].children.len > 0:
         contextSearchNodes(currentParentId, comboLogic())
     else:
+      echo "search is starting"
       contextSearchNodes(currentRootId, comboLogic())
-
-
+      echo "search is done"
 
 
 
@@ -2396,20 +2399,26 @@ proc main(bootstarter : bool) =
 
 
   inputSearch.wEvent_TextEnter do (event: wEvent):
-    if inputSearch.getValue() == searchTerm and searchTerm.len > 0:
+    var aa = dataBox.getSelection().a
+    var bb = dataBox.getSelection().b
+    if inputSearch.getValue() == searchTerm and searchTerm.len > 0 and bb >= aa and comboHasChanged == false:
       findNextGUI()
       inputSearch.setFocus()
     else:
       searchTerm = inputSearch.getValue()
       if searchTerm.len > 0 and tablex[currentRootId].children.len > 0:
         wrapperSearchNodes()
+        comboHasChanged = false
         if searchResultsId.len() > 0:
           if modeStatus == addx:
+            echo "new and found"
             openGUI()
             activateSearch(true)
           elif modeStatus == search:
+            echo "reload"
             reloadSearch()
         else:
+          echo "no res"
           status.setStatusText("Found no results :(")
           openGUI()
           activateSearch(false)
@@ -2419,7 +2428,7 @@ proc main(bootstarter : bool) =
 
 
   searchButton.connect(wEvent_Button) do (event: wEvent):
-    if inputSearch.getValue() == searchTerm and searchTerm.len > 0:
+    if inputSearch.getValue() == searchTerm and searchTerm.len > 0 and searchResultsId.len() > 0 :
       findNextGUI()
       inputSearch.setFocus()
     else:
@@ -2569,10 +2578,12 @@ proc main(bootstarter : bool) =
 
 
   noteCheck.wEvent_CheckBox do (event: wEvent):
+    comboHasChanged = true
     if noteCheck.isChecked == false:
       nodeCheck.setValue(true)
 
   nodeCheck.wEvent_CheckBox do (event: wEvent):
+    comboHasChanged = true
     if nodeCheck.isChecked == false:
       noteCheck.setValue(true)
 
@@ -2864,8 +2875,17 @@ proc main(bootstarter : bool) =
 
   frame.idPrintCTX do ():
     if currentChildren.len() > 0:
-      var temp = printContext(currentChildren)
-      ShellExecute(0, "print", temp, nil, nil, 5)
+      var temp = printContext(tablex[currentParentId].title, currentChildren)
+      if temp != "":
+        ShellExecute(0, "print", temp, nil, nil, 5)
+  
+
+  frame.idPrint do ():
+    if currentNode.len() > 0:
+      var temp = printSingleNote(currentNode)
+      if temp != "":
+        ShellExecute(0, "print", temp, nil, nil, 5)
+
 
 
 
