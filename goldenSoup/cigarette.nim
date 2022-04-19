@@ -1,4 +1,4 @@
-import std / [os, sets, times, tables, algorithm, strutils, options]
+import std / [os, sets, times, tables, algorithm, strutils, options,tempfiles]
 
 import jsony
 import supersnappy
@@ -171,6 +171,16 @@ proc getItOut(title: string, data : string):bool =
     return false
 
 
+proc getItOutPrint(data : string):string =
+  if getString(prefs["exportPath"]).len > 0:
+    try:
+      let (cfile, path) = createTempFile("tmpprefix_", "_end.txt")
+      writeFile(path,data)
+      return path
+    except:
+      return ""
+  else:
+    return ""
 
 
 proc getItOut1to1(title: string, data : string):bool =
@@ -252,6 +262,12 @@ proc mailtoContext*(container: seq[string]):string =
   return data[1 .. ^1].replace("\n", "%0d%0a")
 
 
+proc printContext*(container: seq[string]):string =
+  var data : string
+  for i in container:
+    data.add("\n[ " & tablex[i].title & " ]\n")
+    data.add(tablex[i].data & "\n")
+  result = getItOutPrint(data)
 
 
 proc exportGlobal*(id : string):bool=

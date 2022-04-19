@@ -324,6 +324,8 @@ proc main(bootstarter : bool) =
       idMail
       idMailContext
       idGetInfo
+      idPrint
+      idPrintCTX
 
   let menuBar = MenuBar(frame)
   let menuFile = Menu(menuBar, "&File")
@@ -332,6 +334,7 @@ proc main(bootstarter : bool) =
   menuFile.appendSeparator()
   menuFile.append(idSave, "&Save\tCtrl+S", "Save")
   menuFile.append(idSaveAs, "&Save As ..", "Save as another .kgn archive")
+  menuFile.append(idPrintCTX, "&Print Current Notes", "Print current Note Context on the default windows printer")
   menuFile.appendSeparator()
   menuFile.append(idAddView, "&Add View", "Opens a new Window to edit the same Notes")
   menuFile.appendSeparator()
@@ -2857,6 +2860,14 @@ proc main(bootstarter : bool) =
       addmode()
     testes()
     echo $getHeadCount(currentNode)
+
+
+  frame.idPrintCTX do ():
+    if currentChildren.len() > 0:
+      var temp = printContext(currentChildren)
+      ShellExecute(0, "print", temp, nil, nil, 5)
+
+
 
 
   frame.wEvent_SetFocus do (event: wEvent):
