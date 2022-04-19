@@ -1341,9 +1341,7 @@ proc main(bootstarter : bool) =
       if tablex[currentParentId].children.len > 0:
         contextSearchNodes(currentParentId, comboLogic())
     else:
-      echo "search is starting"
       contextSearchNodes(currentRootId, comboLogic())
-      echo "search is done"
 
 
 
@@ -2022,6 +2020,8 @@ proc main(bootstarter : bool) =
     dataList.enable()
     inputList.enable()
     inputSearch.enable()
+    menuFile.enable(menuFile.findText("Print Note"))
+    menuFile.enable(menuFile.findText("Print Current Notes"))
     menuFile.enable(menuFile.findText("Save\tCtrl+S"))
     menuFile.enable(menuFile.findText("Save As .."))
     menuFile.enable(menuFile.findText("Add View"))
@@ -2059,6 +2059,8 @@ proc main(bootstarter : bool) =
     menuFile.disable(menuFile.findText("Save As .."))
     menuFile.disable(menuFile.findText("Preferences"))
     menuFile.disable(menuFile.findText("Add View"))
+    menuFile.disable(menuFile.findText("Print Note"))
+    menuFile.disable(menuFile.findText("Print Current Notes"))
 
 
 
@@ -2411,14 +2413,11 @@ proc main(bootstarter : bool) =
         comboHasChanged = false
         if searchResultsId.len() > 0:
           if modeStatus == addx:
-            echo "new and found"
             openGUI()
             activateSearch(true)
           elif modeStatus == search:
-            echo "reload"
             reloadSearch()
         else:
-          echo "no res"
           status.setStatusText("Found no results :(")
           openGUI()
           activateSearch(false)
@@ -2428,13 +2427,16 @@ proc main(bootstarter : bool) =
 
 
   searchButton.connect(wEvent_Button) do (event: wEvent):
-    if inputSearch.getValue() == searchTerm and searchTerm.len > 0 and searchResultsId.len() > 0 :
+    var aa = dataBox.getSelection().a
+    var bb = dataBox.getSelection().b
+    if inputSearch.getValue() == searchTerm and searchTerm.len > 0 and bb >= aa and comboHasChanged == false:
       findNextGUI()
       inputSearch.setFocus()
     else:
       searchTerm = inputSearch.getValue()
-      wrapperSearchNodes()
       if searchTerm.len > 0 and tablex[currentRootId].children.len > 0:
+        wrapperSearchNodes()
+        comboHasChanged = false
         if searchResultsId.len() > 0:
           if modeStatus == addx:
             openGUI()
@@ -2870,7 +2872,6 @@ proc main(bootstarter : bool) =
       openGUI()
       addmode()
     testes()
-    echo $getHeadCount(currentNode)
 
 
   frame.idPrintCTX do ():
