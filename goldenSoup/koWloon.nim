@@ -2781,7 +2781,7 @@ proc main(bootstarter : bool) =
 
   frame.idGetInfo do ():
     if currentNode.len() > 0:
-      MessageDialog(frame, caption="Node Info", message="Number of subnodes: " & $getHeadcount(currentNode) & "\n\r" & "Last Edit time: " & getLE(currentNode)).display()
+      MessageDialog(frame, caption="Node Info", message="Number of Notes: " & $getHeadcount(currentNode) & "\n\r" & "Last Edit time: " & getLE(currentNode)).display()
 
 
   frame.idClipboard do ():

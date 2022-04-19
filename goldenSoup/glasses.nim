@@ -179,9 +179,9 @@ proc getHeadCount*(currentNode : string):int =
         childnum = childnum + 1
         if tablex[i].children.len() > 0:
           seq2check.add(i)
-          k = k + 1
           nestingcounter = nestingcounter + 1
       nestingcounter = nestingcounter - 1
+      k = k + 1
     return childnum
 
 
