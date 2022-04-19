@@ -276,8 +276,10 @@ proc main(bootstarter : bool) =
       idUp
       idPlus
       idPlusPlus
+      idPlusPlusPlus
       idRemove
       idMinus
+      idMinusMinus
       idSwapDown
       idSwapUp
       idModify
@@ -471,6 +473,8 @@ proc main(bootstarter : bool) =
     accel.add(wAccelNormal, wKey_F6, idDeepCut)
     accel.add(wAccelNormal, wKey_F7, idDeepCopy)
     accel.add(wAccelNormal, wKey_F8, idPaste)
+    accel.add(wAccelNormal, wKey_Left, idMinusMinus)
+    accel.add(wAccelNormal, wKey_Right, idPlusPlusPlus)
     accel.add(wAccelCtrl, wKey_P, idNotesToNodes)
     accel.add(wAccelCtrl, wKey_M, idModify)
     accel.add(wAccelCtrl, wKey_S, idSave)
@@ -2090,7 +2094,7 @@ proc main(bootstarter : bool) =
 
 
 
-  proc activateSearch() =
+  proc activateSearch(found : bool) =
     modeStatus = search
     frame.title = fmt"{saveMark}{namedrop}{ver}-{archMode} [Find Mode] Searching: '{searchTerm}'"
     menuNode.disable(menuNode.findText("Add Node\tCtrl+Down"))
@@ -2123,15 +2127,23 @@ proc main(bootstarter : bool) =
     boxThree.show()
     dataBox.clear()
     dataList.clear()
-    loadSearchChildren()
-    displayChildrenTitles()
-    currentGrandParentid.reset()
-    currentNode = currentChildren[0]
-    currentParentId = tablex[currentNode].parent
-    dataList.setSelection(0)
-    dataBox.setValue(tablex[currentNode].data)
-    findNextGUI()
-    inputSearch.setFocus()
+    if found == true:
+      loadSearchChildren()
+      displayChildrenTitles()
+      currentGrandParentid.reset()
+      currentNode = currentChildren[0]
+      currentParentId = tablex[currentNode].parent
+      dataList.setSelection(0)
+      dataBox.setValue(tablex[currentNode].data)
+      findNextGUI()
+      inputSearch.setFocus()
+    else:
+      currentNode.reset()
+      currentParentId.reset()
+      currentGrandParentid.reset()
+      currentChildren.reset()
+      displayChildrenTitles()
+
 
 
 
@@ -2391,14 +2403,13 @@ proc main(bootstarter : bool) =
         if searchResultsId.len() > 0:
           if modeStatus == addx:
             openGUI()
-            activateSearch()
+            activateSearch(true)
           elif modeStatus == search:
             reloadSearch()
         else:
           status.setStatusText("Found no results :(")
-          if currentChildren.len == 0:
-            currentNode.reset()
-            currentParentId.reset()
+          openGUI()
+          activateSearch(false)
       else:
         status.setStatusText("Please have at least one node to search, and search at least one character")
 
@@ -2415,14 +2426,13 @@ proc main(bootstarter : bool) =
         if searchResultsId.len() > 0:
           if modeStatus == addx:
             openGUI()
-            activateSearch()
+            activateSearch(true)
           elif modeStatus == search:
             reloadSearch()
         else:
           status.setStatusText("Found no results :(")
-          if currentChildren.len == 0:
-            currentNode.reset()
-            currentParentId.reset()
+          openGUI()
+          activateSearch(false)
       else:
         status.setStatusText("Please have at least one node to search, and search at least one character")
 
@@ -2470,6 +2480,7 @@ proc main(bootstarter : bool) =
     elif modeStatus == search or modeStatus == starkx :
       openGUI()
       addmode()
+
 
 
   addnodeButton.wEvent_MouseEnter do (event: wEvent):
@@ -2662,6 +2673,34 @@ proc main(bootstarter : bool) =
   frame.idMinus do ():
     if modeStatus == addx:
       getOutsideGUI()
+
+  frame.idMinusMinus do (event: wEvent):
+    if modeStatus == addx and dataList.hasFocus():
+      getOutsideGUI()
+    elif dataBox.hasFocus():
+      dataBox.setInsertionPoint(dataBox.getInsertionPoint() - 1)
+    elif inputSearch.hasFocus():
+      inputSearch.setInsertionPoint(inputSearch.getInsertionPoint() - 1)
+    elif inputList.hasFocus():
+      inputList.setInsertionPoint(inputList.getInsertionPoint() - 1)
+
+
+
+
+  frame.idPlusPlusPlus do (event: wEvent):
+    if modeStatus == addx and dataList.hasFocus():
+      if currentNode.len() > 0:
+        getInsideGUI()
+    elif modeStatus == search and dataList.hasFocus() or modeStatus == starkx and dataList.hasFocus():
+      openGUI()
+      addmode()
+    elif dataBox.hasFocus():
+      dataBox.setInsertionPoint(dataBox.getInsertionPoint() + 1)
+    elif inputSearch.hasFocus():
+      inputSearch.setInsertionPoint(inputSearch.getInsertionPoint() + 1)
+    elif inputList.hasFocus():
+      inputList.setInsertionPoint(inputList.getInsertionPoint() + 1)
+
 
   frame.idNotesToNodes do ():
     notesToNodes()
