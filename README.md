@@ -22,7 +22,8 @@ Compile koWloon.nim with flags: --app:gui
 
 # Demo:
 
-https://user-images.githubusercontent.com/103033140/162613961-6c4fd77e-f117-411e-a102-15bc287f0c42.mp4
+https://user-images.githubusercontent.com/103033140/163572996-7a477aa3-4f36-40ef-8168-4443b791f0d6.mp4
+
 
 
 
